@@ -99,7 +99,8 @@ h3{font-size:1.15rem}
 .shot figcaption{position:absolute;left:12px;bottom:12px;background:var(--navy);color:#fff;font-weight:700;font-size:.9rem;padding:6px 14px;border-radius:6px;border-left:3px solid var(--gold)}
 .hero-photo{grid-column:1/-1;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:var(--r)}
 .about-photo{width:100%;max-height:540px;aspect-ratio:4/5;object-fit:cover;object-position:center top;border-radius:var(--r)}
-.quote{border:2px dashed #aebdd1;border-radius:var(--r);padding:24px;background:#fff;color:var(--muted)}
+.quote{border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:var(--r);padding:24px;background:#fff;color:var(--ink)}
+.quote cite small{display:block;font-weight:400;font-size:.8rem;color:var(--muted)}
 .quote cite{display:block;margin-top:12px;font-style:normal;font-weight:600;color:var(--navy)}
 
 /* CTA */
@@ -142,7 +143,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
   .cards,.why{grid-template-columns:repeat(3,1fr)}
   .why{grid-template-columns:repeat(2,1fr)}
   .strip-in{grid-template-columns:repeat(4,1fr)}
-  .gallery{grid-template-columns:repeat(3,1fr)}
+  .gallery,.cards-4{grid-template-columns:repeat(2,1fr)}
   .gallery .slot,.shot{aspect-ratio:4/5}
   .steps{grid-template-columns:repeat(2,1fr)}
   .about,.contact{grid-template-columns:1fr 1fr}
@@ -161,5 +162,5 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
   .hero-in{grid-template-columns:1.1fr .9fr;align-items:center}
   .steps{grid-template-columns:repeat(4,1fr)}
   .steps li{flex-direction:column;align-items:flex-start}
-  .why{grid-template-columns:repeat(4,1fr)}
+  .why,.gallery,.cards-4{grid-template-columns:repeat(4,1fr)}
 }
