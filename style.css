@@ -143,7 +143,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
   .cards,.why{grid-template-columns:repeat(3,1fr)}
   .why{grid-template-columns:repeat(2,1fr)}
   .strip-in{grid-template-columns:repeat(4,1fr)}
-  .gallery,.cards-4{grid-template-columns:repeat(2,1fr)}
+  .cards-4{grid-template-columns:repeat(2,1fr)}
+  .gallery{grid-template-columns:repeat(3,1fr)}
   .gallery .slot,.shot{aspect-ratio:4/5}
   .steps{grid-template-columns:repeat(2,1fr)}
   .about,.contact{grid-template-columns:1fr 1fr}
@@ -162,5 +163,5 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
   .hero-in{grid-template-columns:1.1fr .9fr;align-items:center}
   .steps{grid-template-columns:repeat(4,1fr)}
   .steps li{flex-direction:column;align-items:flex-start}
-  .why,.gallery,.cards-4{grid-template-columns:repeat(4,1fr)}
+  .why,.cards-4{grid-template-columns:repeat(4,1fr)}
 }
