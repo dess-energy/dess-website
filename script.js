@@ -12,7 +12,7 @@ burger.addEventListener('click', () => setMenu(!menu.classList.contains('open'))
 menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
 
 // Fade-in on scroll
-const items = document.querySelectorAll('.sec h2, .card, .why > div, .steps li, .slot, .quote, .cta .wrap');
+const items = document.querySelectorAll('.sec h2, .card, .why, .step, .tile, .shot, .quote, .stat, details');
 items.forEach(el => el.classList.add('reveal'));
 if ('IntersectionObserver' in window) {
   const io = new IntersectionObserver(entries => entries.forEach(e => {
@@ -32,7 +32,7 @@ const rules = {
   message: v => v.trim().length >= 5 || 'Tell us a little about what you need.'
 };
 
-form.addEventListener('submit', async e => {
+form && form.addEventListener('submit', async e => {
   e.preventDefault();
   status.className = 'status';
   status.textContent = '';
