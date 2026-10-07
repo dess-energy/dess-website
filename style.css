@@ -152,3 +152,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
  .quotes{grid-template-columns:repeat(4,1fr)}
  .foot-in{grid-template-columns:1.3fr 1fr 1fr 1fr 1.2fr}
 }
+
+.logos{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.logo{background:#fff;border:1px solid var(--bd);border-radius:10px;height:84px;padding:14px 18px;display:flex;align-items:center;justify-content:center}
+.logo img{max-height:44px;max-width:100%;width:auto;height:auto;object-fit:contain;filter:grayscale(1);opacity:.85;transition:filter .2s,opacity .2s}
+.logo:hover img{filter:none;opacity:1}
+.logo b{font-size:1.3rem;font-weight:800;letter-spacing:.08em;color:#6b778c}
+@media(min-width:760px){.logos{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:960px){.logos{grid-template-columns:repeat(5,1fr)}}
