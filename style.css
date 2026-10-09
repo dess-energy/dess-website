@@ -162,11 +162,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 @media(min-width:960px){.logos{grid-template-columns:repeat(5,1fr)}}
 
 /* v3 upgrades */
-.nav-r{display:flex;align-items:center;gap:2px}
-.hcall{display:grid;place-items:center;width:44px;height:44px;color:var(--gold)}
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(6,10,20,.97);border-top:1px solid var(--ln)}
-.dock .btn{flex:1;min-height:46px}
-body{padding-bottom:72px}
 .hero-media img{aspect-ratio:4/3}
 .pcard{padding:0}
 .pcard::before{z-index:2}
@@ -180,7 +175,14 @@ body{padding-bottom:72px}
 .or{text-align:center;color:var(--mut);font-size:.9rem;margin-top:4px}
 form .btn-wa{width:100%}
 @media(min-width:960px){
- .nav-r,.dock{display:none}
- body{padding-bottom:0}
  .hero-media img{aspect-ratio:6/7;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.45)}
 }
+
+.co{margin-bottom:14px;color:var(--ink)}
+.clist{list-style:none;padding:0;display:grid;gap:12px}
+.clist li{display:flex;gap:12px;align-items:flex-start;color:var(--mut);line-height:1.5}
+.clist .ico{width:22px;height:22px;color:var(--blue);margin-top:2px}
+.clist .wa .ico{color:#1fa855}
+.clist a{color:var(--blue);font-weight:600}
+.clist strong{color:var(--ink)}
+.js .reveal.in.card:hover{transform:translateY(-3px)}

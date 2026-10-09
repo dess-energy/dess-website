@@ -12,14 +12,20 @@ burger.addEventListener('click', () => setMenu(!menu.classList.contains('open'))
 menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
 
 // Fade-in on scroll
-const items = document.querySelectorAll('.sec h2, .card, .why, .step, .tile, .shot, .quote, .stat, details');
-items.forEach(el => el.classList.add('reveal'));
+const items = document.querySelectorAll('.hero-in > div > *, .hero-media, .phero .wrap > *, .sec .eyebrow, .sec h2, .sec .big, .sec .sub, .sec .note, .sec .lead, .card, .why, .step, .tile, .shot, .quote, .stat, .logo, .chips > *, details, .clist li, .contact form, .cta h2, .cta p, .cta .btns');
+const idx = new Map();
+items.forEach(el => {
+  el.classList.add('reveal');
+  const n = idx.get(el.parentNode) || 0; idx.set(el.parentNode, n + 1);
+  el.style.transitionDelay = Math.min(n, 5) * 70 + 'ms';
+});
+const show = el => { el.classList.add('in'); setTimeout(() => { el.style.transitionDelay = ''; }, 1200); };
 if ('IntersectionObserver' in window) {
   const io = new IntersectionObserver(entries => entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-  }), { threshold: 0.12 });
+    if (e.isIntersecting) { show(e.target); io.unobserve(e.target); }
+  }), { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
   items.forEach(el => io.observe(el));
-} else items.forEach(el => el.classList.add('in'));
+} else items.forEach(show);
 
 // Contact form validation
 const form = document.getElementById('form');
