@@ -131,14 +131,14 @@ form && form.addEventListener('submit', async e => {
 (() => { // live-looking globe with breathing zoom
   const c = document.getElementById('globe'); if (!c) return;
   const x = c.getContext('2d'), D = Math.PI / 180, mo = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let S = 0, la0 = 10.3, lo0 = 8.1, last = 0, raf = 0;
+  let S = 0, la0 = 10, lo0 = 8, last = 0, raf = 0;
   const size = () => { S = c.clientWidth; const d = Math.min(devicePixelRatio || 1, 2); c.width = S * d; c.height = S * d; x.setTransform(d, 0, 0, d, 0, 0); };
-  const dots = [], N = 5000; for (let i = 0; i < N; i++) dots.push([Math.asin(1 - 2 * (i + .5) / N) / D, (i * 137.508) % 360 - 180]);
-  const P = [{ n: 'Kano', la: 12.0, lo: 8.52, dx: 54, dy: -48, r: 0 }, { n: 'Abuja', la: 9.07, lo: 7.4, dx: -60, dy: -8, r: 1 }, { n: 'Nasarawa', la: 8.49, lo: 8.52, dx: 52, dy: 52, r: 2 }];
+  const dots = [], N = 1100; for (let i = 0; i < N; i++) dots.push([Math.asin(1 - 2 * (i + .5) / N) / D, (i * 137.508) % 360 - 180]);
+  const P = [{ n: 'Kano', la: 27, lo: 6, dx: 22, dy: -30, r: 0 }, { n: 'Abuja', la: 8, lo: -16, dx: -22, dy: -26, r: 1 }, { n: 'Nasarawa', la: -8, lo: 24, dx: 22, dy: 30, r: 2 }];
   const pj = (la, lo) => { la *= D; lo *= D; const a = la0 * D, dl = lo - lo0 * D; return [Math.cos(la) * Math.sin(dl), Math.cos(a) * Math.sin(la) - Math.sin(a) * Math.cos(la) * Math.cos(dl), Math.sin(a) * Math.sin(la) + Math.cos(a) * Math.cos(la) * Math.cos(dl)]; };
   function draw(t) {
-    last = t; const z = mo ? 1 : Math.min(1, (.5 + .5 * Math.sin(t / 2600 - 1.6)) * 1.6); lo0 = 8.1 + (mo ? 0 : (5 - 3.8 * z) * Math.sin(t / 4300));
-    const cx = S / 2, cy = S / 2, R0 = S * .4, R = R0 * (1 + z * 5); x.clearRect(0, 0, S, S);
+    last = t; lo0 = 8 + (mo ? 0 : 26 * Math.sin(t / 5200));
+    const cx = S / 2, cy = S / 2, R0 = S * .4, R = R0; x.clearRect(0, 0, S, S);
     [[1.34, .42, -.5, 1700], [1.22, .36, .55, 2300]].forEach(([a, b, rot, sp], k) => {
       x.save(); x.translate(cx, cy); x.rotate(rot); x.strokeStyle = 'rgba(120,170,255,.24)'; x.lineWidth = 1; x.beginPath(); x.ellipse(0, 0, R0 * a, R0 * b, 0, 0, 7); x.stroke();
       const u = t / sp * (k ? -1 : 1); x.fillStyle = k ? '#f5b301' : '#6fb0ff'; x.shadowColor = x.fillStyle; x.shadowBlur = 12; x.beginPath(); x.arc(Math.cos(u) * R0 * a, Math.sin(u) * R0 * b, 3.2, 0, 7); x.fill(); x.restore();
@@ -147,7 +147,7 @@ form && form.addEventListener('submit', async e => {
     x.fillStyle = g; x.beginPath(); x.arc(cx, cy, R, 0, 7); x.fill(); x.strokeStyle = 'rgba(90,150,255,.5)'; x.lineWidth = 1.2; x.stroke();
     x.lineWidth = .7; x.strokeStyle = 'rgba(110,170,255,.18)';
     const line = pts => { x.beginPath(); let on = false; pts.forEach(([la, lo]) => { const p = pj(la, lo); if (p[2] > 0) { const X = cx + p[0] * R, Y = cy - p[1] * R; on ? x.lineTo(X, Y) : x.moveTo(X, Y); on = true; } else on = false; }); x.stroke(); };
-    for (let la = -75; la <= 75; la += 15) { const a = []; for (let lo = -180; lo <= 180; lo += 3) a.push([la, lo]); line(a); }
+    for (let la = -75; la <= 75; la += 20) { const a = []; for (let lo = -180; lo <= 180; lo += 3) a.push([la, lo]); line(a); }
     for (let lo = -180; lo < 180; lo += 15) { const a = []; for (let la = -88; la <= 88; la += 3) a.push([la, lo]); line(a); }
     dots.forEach(([la, lo]) => { const p = pj(la, lo); if (p[2] > 0) { x.fillStyle = `rgba(140,190,255,${.12 + .5 * p[2]})`; x.fillRect(cx + p[0] * R, cy - p[1] * R, 1.5, 1.5); } });
     x.save(); x.setLineDash([5, 6]); x.lineDashOffset = -t / 60; x.strokeStyle = '#f5b301'; x.lineWidth = 1.5;
