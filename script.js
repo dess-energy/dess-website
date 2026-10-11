@@ -121,12 +121,46 @@ form && form.addEventListener('submit', async e => {
   const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('active', e.isIntersecting)), { rootMargin: '-38% 0px -38% 0px' });
   li.forEach(l => io.observe(l)); li[0].classList.add('active');
 })();
-(() => { // whatsapp popup
-  const b = document.querySelector('.wafab'), p = document.getElementById('wapop'); if (!b || !p) return;
-  const set = o => { p.hidden = !o; b.setAttribute('aria-expanded', o); const d = b.querySelector('.dot'); if (o && d) d.remove(); };
-  b.addEventListener('click', () => set(p.hidden));
-  p.querySelector('.waclose').addEventListener('click', () => { set(false); b.focus(); });
-  addEventListener('keydown', e => { if (e.key === 'Escape' && !p.hidden) set(false); });
+(() => { // DESS assistant (free, answers only from approved DESS facts)
+  const fab = document.querySelector('.wafab'), pop = document.getElementById('wapop'); if (!fab || !pop) return;
+  const msgs = document.getElementById('wamsgs'), chips = document.getElementById('wachips'), form = document.getElementById('wain'), input = document.getElementById('wainput'), start = document.getElementById('wastart');
+  const WA = 'https://wa.me/2349049811269?text=', PH = '+234 904 981 1269';
+  const KB = [
+    ['price', ['price', 'prices', 'cost', 'how much', 'quote', 'quotation', 'estimate', 'budget', 'cheap', 'discount', 'nawa', 'farashi'], 'Cost depends on the scope of the project, the equipment chosen and the location, so we advise after understanding your requirements. For a quote, tap Continue on WhatsApp and share a few details about your premises.'],
+    ['cctv', ['cctv', 'camera', 'surveillance', 'dvr', 'nvr', 'security system', 'monitoring'], 'We design and install CCTV and security systems for homes, offices, hotels, schools, hospitals, factories, estates and institutions. That covers camera installation, DVR/NVR recording, remote viewing setup, configuration, maintenance and upgrades. <a href="/cctv">See CCTV &amp; Security</a>'],
+    ['solar', ['solar', 'inverter', 'battery', 'batteries', 'panel', 'backup power', 'generator', 'nepa', 'power supply'], 'We design and install solar and backup power systems: panels, inverters, battery storage, configuration, maintenance and upgrades. We assess your needs first, then design the system and select the equipment. <a href="/solar">See Solar Power Systems</a>'],
+    ['maintenance', ['maintenance', 'repair', 'fix', 'faulty', 'not working', 'stopped working', 'troubleshoot', 'servicing', 'upgrade'], 'Yes. We offer preventive maintenance, inspection, troubleshooting, repairs where applicable, optimisation and upgrades for solar, CCTV, connectivity and other installed systems. <a href="/maintenance">See Maintenance</a>'],
+    ['consultation', ['consult', 'consultation', 'advice', 'advise', 'guidance', 'recommend', 'which system', 'what do i need', 'what size'], 'We can help you decide the right solution before you buy equipment or start installation: solar requirements, CCTV planning, connectivity, upgrades and installation planning. <a href="/consultation">See Technical Consultation</a>'],
+    ['starlink', ['starlink', 'internet', 'wifi', 'wi-fi', 'network', 'networking', 'connectivity', 'router'], 'Yes. We handle Starlink installation, activation and configuration, connectivity setup and technical support, plus networking and Wi-Fi infrastructure.'],
+    ['other', ['intercom', 'door lock', 'door locks', 'access control', 'electric fence', 'electrical'], 'Besides our four main services, we also handle intercom installation, digital door locks, access control, electric fence systems, networking, Wi-Fi infrastructure and electrical installation and maintenance.'],
+    ['overview', ['what do you do', 'services', 'offer', 'provide', 'capabilities', 'what you do'], 'Our four main services are CCTV &amp; Security, Solar Power Systems, Maintenance and Technical Consultation. We also do Starlink, intercoms, digital door locks, access control, electric fences, networking, Wi-Fi and electrical work. <a href="/#solutions">Explore solutions</a>'],
+    ['location', ['where', 'location', 'address', 'office', 'kano', 'abuja', 'mararaba', 'nasarawa', 'nationwide', 'international', 'outside', 'visit', 'state'], 'We operate in Kano (No. 35 France Road, Sabon Gari) and Mararaba (Old Orange Market Street, Karu LGA, Nasarawa State). Mararaba is our base for projects across Nasarawa and Abuja. We also take on projects nationwide and internationally; pricing may vary with location, logistics and scope.'],
+    ['contact', ['contact', 'phone', 'call', 'number', 'email', 'whatsapp', 'reach', 'talk to', 'speak', 'human', 'person', 'agent'], 'You can call or WhatsApp us on ' + PH + ', or email <a href="mailto:daboenergyss@gmail.com">daboenergyss@gmail.com</a>. Tap Continue on WhatsApp below to message the team now.'],
+    ['experience', ['experience', 'years', 'how many projects', 'customers', 'trust', 'track record', 'how long', 'reliable'], 'DESS has 7+ years of experience, 150+ projects completed and 500+ customers served. You can read customer feedback in the testimonials section.'],
+    ['brands', ['brand', 'brands', 'hikvision', 'dahua', 'deye', 'growatt', 'ubiquiti', 'tp-link', 'felicity', 'must', 'cell american', 'dealer', 'authorised', 'authorized', 'partner'], 'Brands and technologies we work with include Starlink, Hikvision, Dahua, TP-Link, Ubiquiti, Growatt, Felicity, MUST, Deye and Cell American. Equipment is specified according to project requirements.'],
+    ['sectors', ['hotel', 'school', 'hospital', 'factory', 'government', 'estate', 'shop', 'home', 'residential', 'business', 'company', 'university', 'clinic', 'developer'], 'We serve homes, shops, offices, corporate organisations, hotels, schools, hospitals, factories, government and institutions, estates and property developers. Requirements differ by sector, so we start by understanding your premises and needs.'],
+    ['case', ['case study', 'project', 'projects', 'example', 'kaduna', 'portfolio', 'previous work', 'video'], 'Our featured case study is a CCTV restoration, upgrade and monthly maintenance job at a construction facility in Kaduna. <a href="/#projects">Watch it under Our work</a>'],
+    ['hours', ['hours', 'opening', 'open', 'closed', 'weekend', 'available', 'what time'], 'I do not have our opening hours yet. For the fastest reply, message the team on WhatsApp or call ' + PH + '.'],
+    ['unknown', ['warranty', 'guarantee', 'financing', 'instalment', 'installment', 'delivery', 'payment plan', 'loan', 'credit'], 'I do not have confirmed information on that, and I do not want to guess. Please ask our team directly on WhatsApp.'],
+    ['hello', ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'sannu', 'how far'], 'Hello! I can answer questions about our CCTV, solar, maintenance, Starlink and consultation services, our locations and how to reach us.'],
+    ['thanks', ['thanks', 'thank you', 'nagode'], 'You are welcome! Anything else I can help with? You can also continue on WhatsApp anytime.']
+  ];
+  const CHIPS = [['CCTV', 'CCTV installation'], ['Solar', 'Solar power'], ['Maintenance', 'Maintenance'], ['Starlink', 'Starlink'], ['Consultation', 'Technical consultation'], ['Locations', 'Where are you located?'], ['Price', 'How much does it cost?'], ['Contact', 'Contact details']];
+  const FALLBACK = 'I am not sure about that one. Our team can answer directly: tap Continue on WhatsApp below.';
+  const esc = k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const has = (t, k) => new RegExp('(^|[^a-z])' + esc(k) + 's?([^a-z]|$)').test(t);
+  const find = q => { const t = q.toLowerCase(); let best = null, sc = 0; KB.forEach(([id, ks, a]) => { const n = ks.filter(k => has(t, k)).length; if (n > sc) { sc = n; best = a; } }); return best; };
+  const add = (cls, html, plain) => { const d = document.createElement('div'); d.className = 'm ' + cls; plain ? d.textContent = html : d.innerHTML = html; msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d; };
+  const link = q => { start.href = WA + encodeURIComponent('Hello DESS, I was chatting with the website assistant' + (q ? ' about: ' + q : '') + '.'); };
+  const reply = (q, done) => { const d = add('b', '…'); setTimeout(() => { const a = find(q); if (a) { d.innerHTML = a; msgs.scrollTop = msgs.scrollHeight; } else if (window.DESS_AI_ENDPOINT) { fetch(window.DESS_AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: q }) }).then(r => r.json()).then(j => { d.textContent = j.answer || FALLBACK; }).catch(() => { d.textContent = FALLBACK; }); } else d.textContent = FALLBACK; link(q); msgs.scrollTop = msgs.scrollHeight; }, 450); };
+  const ask = q => { q = q.trim(); if (!q) return; add('u', q, true); reply(q); };
+  CHIPS.forEach(([l, q]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = l; b.addEventListener('click', () => ask(q)); chips.appendChild(b); });
+  form.addEventListener('submit', e => { e.preventDefault(); ask(input.value); input.value = ''; });
+  let started = false;
+  const set = o => { pop.hidden = !o; fab.setAttribute('aria-expanded', o); const d = fab.querySelector('.dot'); if (o) { if (d) d.remove(); if (!started) { started = true; add('b', 'Hello! I am the DESS assistant, an automated helper. Ask me about our services, locations or how to reach us, or pick a topic below. For quotes, I will point you to our team on WhatsApp.'); link(''); } setTimeout(() => input.focus(), 50); } };
+  fab.addEventListener('click', () => set(pop.hidden));
+  pop.querySelector('.waclose').addEventListener('click', () => { set(false); fab.focus(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !pop.hidden) set(false); });
 })();
 (() => { // live-looking globe with breathing zoom
   const c = document.getElementById('globe'); if (!c) return;
