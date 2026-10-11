@@ -125,7 +125,7 @@ form && form.addEventListener('submit', async e => {
   const fab = document.querySelector('.wafab'), pop = document.getElementById('wapop'); if (!fab || !pop) return;
   const msgs = document.getElementById('wamsgs'), chips = document.getElementById('wachips'), form = document.getElementById('wain'), input = document.getElementById('wainput'), start = document.getElementById('wastart');
   const WA = 'https://wa.me/2349049811269?text=', PH = '+234 904 981 1269';
-  const AI_URL = 'PASTE_WORKER_URL_HERE'; // paste your Cloudflare Worker address here to switch on AI answers
+  const AI_URL = 'https://dess-assistant.iishaqman.workers.dev/'; // paste your Cloudflare Worker address here to switch on AI answers
   const KB = [
     ['fees', ['free consultation', 'free inspection', 'inspection fee', 'consultation fee', 'is it free', 'free of charge', 'charge for', 'assessment fee', 'free', 'site visit', 'site consultation', 'inspection'], 'Phone consultations are free. Site consultations are paid, and the price depends on the location, so the team will confirm it for your project. Tap Request a quote or call ' + PH + '.'],
     ['lead', ['callback', 'call me', 'call back', 'request a quote', 'get a quote', 'want a quote', 'need a quote', 'quote me', 'a quotation', 'book', 'visit my', 'come to my', 'how soon', 'urgent', 'assess my'], ''],
