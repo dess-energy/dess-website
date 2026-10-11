@@ -337,3 +337,22 @@ form .btn-wa{width:100%}
 .wain input{flex:1;border-radius:999px;padding:11px 16px}
 .wain button{flex:none;width:44px;height:44px;border:0;border-radius:50%;background:var(--blue);color:#fff;font-size:1.2rem;cursor:pointer}
 .wapop .start{flex:none;margin:0;border-radius:0;padding:13px}
+.m .ai{display:block;margin-top:6px;opacity:.65;font-size:.72rem}
+.m{white-space:pre-line}
+
+/* v6: smaller hero buttons, shorter case study with read more */
+.hero .btns{gap:10px;margin-top:24px}
+.hero .btn{min-height:40px;padding:8px 18px;font-size:.86rem}
+@media(min-width:760px){.hero .btn{min-height:46px;padding:10px 26px;font-size:.95rem}}
+.case-v{max-width:230px}
+.case{gap:22px;padding:18px}
+.case-body{position:relative}
+.js .case-body{max-height:150px;overflow:hidden;transition:max-height .55s ease}
+.js .case-body::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(rgba(12,19,34,0),var(--ink2) 85%);pointer-events:none;transition:opacity .3s}
+.case.open .case-body::after{opacity:0}
+.case-btn{display:none;margin-top:14px;align-items:center;gap:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:999px;padding:9px 22px;font:700 .88rem system-ui,sans-serif;cursor:pointer;transition:background .2s,color .2s}
+.js .case-btn{display:inline-flex}
+.case-btn::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .3s}
+.case.open .case-btn::after{transform:rotate(-135deg) translateY(-2px)}
+.case-btn:hover{background:var(--gold);color:var(--ink)}
+@media(min-width:960px){.case-v{max-width:270px}.case{grid-template-columns:290px 1fr;gap:36px;padding:30px}.js .case-body{max-height:170px}}
