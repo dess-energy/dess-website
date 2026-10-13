@@ -4,15 +4,23 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 // Mobile menu
 const burger = document.querySelector('.burger');
 const menu = document.getElementById('menu');
+const scrim = document.querySelector('.scrim'), navEl = document.querySelector('.nav');
 const setMenu = open => {
   menu.classList.toggle('open', open);
   burger.setAttribute('aria-expanded', open);
+  if (scrim) scrim.classList.toggle('open', open);
+  if (navEl) navEl.classList.toggle('menu-open', open);
+  document.documentElement.classList.toggle('noscroll', open);
+  if (open) { const x = menu.querySelector('.drawer-x'); if (x) setTimeout(() => x.focus(), 60); } else if (document.activeElement && menu.contains(document.activeElement)) burger.focus();
 };
 burger.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
+const dx = menu.querySelector('.drawer-x'); if (dx) dx.addEventListener('click', () => setMenu(false));
+if (scrim) scrim.addEventListener('click', () => setMenu(false));
+addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) setMenu(false); });
 menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
 
 // Fade-in on scroll
-const items = document.querySelectorAll('.hero-in > div > *, .hero-media, .phero .wrap > *, .sec .eyebrow, .sec h2, .sec .big, .sec .sub, .sec .note, .sec .lead, .card, .why, .step, .tile, .shot, .case-v, .case-t > *, .quote, .stat, .chips > *, details, .clist li, .contact form, .cta h2, .cta p, .cta .btns');
+const items = document.querySelectorAll('.hero-in > div > *, .hero-media, .phero .wrap > *, .sec .eyebrow, .sec h2, .sec .big, .sec .sub, .sec .note, .sec .lead, .card, .why, .step, .tile, .shot, .bcard, .case-v, .case-t > *, .quote, .stat, .chips > *, details, .clist li, .contact form, .cta h2, .cta p, .cta .btns');
 const idx = new Map();
 items.forEach(el => {
   el.classList.add('reveal');
@@ -249,4 +257,10 @@ form && form.addEventListener('submit', async e => {
   const fit = () => { body.style.maxHeight = c.classList.contains('open') ? body.scrollHeight + 'px' : ''; };
   btn.addEventListener('click', () => { const o = c.classList.toggle('open'); btn.setAttribute('aria-expanded', o); btn.firstChild.textContent = o ? 'Show less' : 'Read more'; fit(); if (!o) c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); });
   addEventListener('resize', fit);
+})();
+
+(() => { // header turns solid on scroll
+  const nav = document.querySelector('.nav'); if (!nav) return;
+  const f = () => nav.classList.toggle('scrolled', scrollY > 16);
+  addEventListener('scroll', f, { passive: true }); f();
 })();
