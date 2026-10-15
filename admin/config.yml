@@ -1,0 +1,344 @@
+# DESS website admin (Sveltia CMS). Saves changes to GitHub; a safety-checked build then updates the live site.
+# Only change 'repo' below if your GitHub repository has a different name.
+backend:
+  name: github
+  repo: dess-energy/dess-website
+  branch: main
+site_url: https://dess.com.ng
+display_url: https://dess.com.ng
+logo_url: https://dess.com.ng/logo-512.png
+locale: en
+publish_mode: simple
+media_folder: images/uploads
+public_folder: /images/uploads
+media_libraries:
+  default:
+    config:
+      max_file_size: 15000000
+      slugify_filename: true
+      transformations:
+        raster_image:
+          format: webp
+          quality: 80
+          width: 1600
+          height: 1600
+collections:
+- name: updates
+  label: Project updates
+  label_singular: Project update
+  folder: content/updates
+  extension: json
+  format: json
+  create: true
+  slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+  summary: '{{title}} ({{category}})'
+  fields:
+  - label: Title
+    name: title
+    widget: string
+    hint: 'A short headline, for example: CCTV cameras added at a school gate.'
+  - label: Date
+    name: date
+    widget: datetime
+    date_format: YYYY-MM-DD
+    time_format: false
+    format: YYYY-MM-DD
+  - label: Category
+    name: category
+    widget: select
+    options:
+    - Solar
+    - CCTV
+    - Starlink
+    - Maintenance
+    - Consultation
+    - Other
+    default: Solar
+  - label: Location
+    name: location
+    widget: string
+    required: false
+    hint: Town or area only. Leave empty if the client wants it private.
+  - label: What was done
+    name: summary
+    widget: text
+    hint: Plain text. Leave a blank line between paragraphs. Do not name clients unless they agreed.
+  - label: Photos
+    name: photos
+    widget: list
+    required: false
+    max: 12
+    field:
+      label: Photo
+      name: photo
+      widget: image
+    hint: Add up to 12 photos. They are resized automatically.
+  - label: Show on website
+    name: published
+    widget: boolean
+    default: true
+    hint: Switch off to keep it as a hidden draft.
+- name: pages
+  label: Website text and settings
+  files:
+  - name: site
+    label: Contact details and social links
+    file: content/site.json
+    fields:
+    - label: Phone (as shown to visitors)
+      name: phone_display
+      widget: string
+      hint: 'Example: +234 904 981 1269'
+    - label: Phone (international format
+      no spaces): null
+      name: phone_e164
+      widget: string
+      hint: 'Example: +2349049811269'
+    - label: WhatsApp number (digits only)
+      name: whatsapp_number
+      widget: string
+      hint: 'Example: 2349049811269'
+    - label: Email
+      name: email
+      widget: string
+    - label: Kano address
+      name: kano_address
+      widget: string
+    - label: Mararaba address
+      name: mararaba_address
+      widget: string
+    - label: Working hours
+      name: hours_main
+      widget: string
+    - label: Hours note
+      name: hours_note
+      widget: string
+      required: false
+    - label: Short hours (footer)
+      name: hours_short
+      widget: string
+    - label: Opening time (for Google)
+      name: hours_opens
+      widget: string
+      hint: 24-hour, like 09:00
+    - label: Closing time (for Google)
+      name: hours_closes
+      widget: string
+      hint: 24-hour, like 17:00
+    - label: Facebook link
+      name: facebook
+      widget: string
+    - label: Instagram link
+      name: instagram
+      widget: string
+    - label: X (Twitter) link
+      name: x
+      widget: string
+    - label: TikTok link
+      name: tiktok
+      widget: string
+  - name: home
+    label: Homepage text
+    file: content/home.json
+    fields:
+    - label: Small line above the headline
+      name: eyebrow
+      widget: string
+    - label: Headline (white part)
+      name: h1_line1
+      widget: string
+    - label: Headline (gold part)
+      name: h1_gold
+      widget: string
+    - label: Introduction under the headline
+      name: lead
+      widget: text
+    - label: Four numbers strip
+      name: stats
+      widget: list
+      min: 4
+      max: 4
+      hint: Exactly four. A number like 7+ counts up; plain words just show.
+      fields:
+      - label: Number or word
+        name: display
+        widget: string
+      - label: Label
+        name: label
+        widget: string
+    - label: About DESS paragraph
+      name: about
+      widget: text
+    - label: Why DESS points
+      name: why
+      widget: list
+      fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Text
+        name: text
+        widget: text
+    - label: Closing banner headline
+      name: cta_title
+      widget: string
+    - label: Closing banner text
+      name: cta_text
+      widget: text
+    - label: Frequently asked questions
+      name: faq
+      widget: list
+      fields:
+      - label: Question
+        name: q
+        widget: string
+      - label: Answer
+        name: a
+        widget: text
+  - name: services
+    label: Services text
+    file: content/services.json
+    fields:
+    - label: CCTV and security
+      name: cctv
+      widget: object
+      fields:
+      - label: Introduction
+        name: lead
+        widget: text
+      - label: Three short points on the homepage card
+        name: card_bullets
+        widget: list
+        min: 3
+        max: 3
+        field:
+          label: Point
+          name: point
+          widget: string
+      - label: What this covers
+        name: covers
+        widget: list
+        field:
+          label: Item
+          name: item
+          widget: string
+      - label: Note
+        name: note
+        widget: text
+    - label: Solar power
+      name: solar
+      widget: object
+      fields:
+      - label: Introduction
+        name: lead
+        widget: text
+      - label: Three short points on the homepage card
+        name: card_bullets
+        widget: list
+        min: 3
+        max: 3
+        field:
+          label: Point
+          name: point
+          widget: string
+      - label: What this covers
+        name: covers
+        widget: list
+        field:
+          label: Item
+          name: item
+          widget: string
+      - label: Note
+        name: note
+        widget: text
+    - label: Maintenance
+      name: maintenance
+      widget: object
+      fields:
+      - label: Introduction
+        name: lead
+        widget: text
+      - label: Three short points on the homepage card
+        name: card_bullets
+        widget: list
+        min: 3
+        max: 3
+        field:
+          label: Point
+          name: point
+          widget: string
+      - label: What this covers
+        name: covers
+        widget: list
+        field:
+          label: Item
+          name: item
+          widget: string
+      - label: Note
+        name: note
+        widget: text
+    - label: Technical consultation
+      name: consultation
+      widget: object
+      fields:
+      - label: Introduction
+        name: lead
+        widget: text
+      - label: Three short points on the homepage card
+        name: card_bullets
+        widget: list
+        min: 3
+        max: 3
+        field:
+          label: Point
+          name: point
+          widget: string
+      - label: What this covers
+        name: covers
+        widget: list
+        field:
+          label: Item
+          name: item
+          widget: string
+      - label: Note
+        name: note
+        widget: text
+    - label: Additional services list
+      name: additional
+      widget: list
+      field:
+        label: Service
+        name: item
+        widget: string
+  - name: testimonials
+    label: Testimonials
+    file: content/testimonials.json
+    fields:
+    - label: Testimonials
+      name: items
+      widget: list
+      summary: '{{fields.name}}'
+      fields:
+      - label: Customer name
+        name: name
+        widget: string
+        hint: Use the name the customer agreed to show.
+      - label: What they said
+        name: quote
+        widget: text
+        hint: Their real words only.
+      - label: Language
+        name: language
+        widget: select
+        options:
+        - label: English
+          value: en
+        - label: Hausa
+          value: ha
+        - label: Nigerian Pidgin
+          value: pcm
+        default: en
+      - label: Show on website
+        name: show
+        widget: boolean
+        default: true
