@@ -408,13 +408,15 @@ def verify():
         _need('{E(' not in t and '{S[' not in t and '{HM[' not in t and 'PASTE_' not in t, f + ': unfilled placeholder found')
         if f == 'index.html': ids = set(re.findall(r'id="([^"]+)"', t))
     for need in ('solutions', 'why', 'projects', 'faq', 'contact', 'testimonials', 'about'): _need(need in ids, 'Homepage section missing: ' + need)
+    missing = {}
     for f in GENERATED:
         if not f.endswith('.html'): continue
         t = open(O + f, encoding='utf-8').read()
-        for h in set(re.findall(r'(?:href|src)="(/[^"#?]*)', t)):
+        for h in set(re.findall(r'(?:href|src|poster)="(/[^"#?]*)', t)):
             if h == '/': continue
             ok = os.path.exists(SRC + h.lstrip('/')) or os.path.exists(O + h.lstrip('/')) or os.path.exists(O + h.lstrip('/') + '.html') or os.path.exists(SRC + h.lstrip('/') + '.html')
-            _need(ok, '%s links to a missing file: %s' % (f, h))
+            if not ok: missing.setdefault(h, []).append(f)
+    _need(not missing, 'These files are missing from your GitHub repository. Please upload them to the main folder: ' + ', '.join(sorted(m.lstrip('/') for m in missing)))
 try:
     verify()
 except BuildError as e:
