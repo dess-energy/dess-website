@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "name": "Ibrahim A.",
+      "quote": "DESS did a very neat solar installation. Good service and professional team.",
+      "language": "en",
+      "show": true
+    },
+    {
+      "name": "Musa B.",
+      "quote": "Aiki yayi kyau sosai. Sun gama komai cikin lokaci, kuma farashin ya yi kyau.",
+      "language": "ha",
+      "show": true
+    },
+    {
+      "name": "Amina S.",
+      "quote": "DESS installed our CCTV perfectly. Very professional and reliable.",
+      "language": "en",
+      "show": true
+    },
+    {
+      "name": "Emeka O.",
+      "quote": "These guys sabi wetin dem dey do. Fast service and clean installation.",
+      "language": "pcm",
+      "show": true
+    }
+  ]
+}
