@@ -1,0 +1,80 @@
+{
+  "cctv": {
+    "lead": "Surveillance systems planned around your premises, then installed and configured to a professional standard for homes, offices, hotels, schools, hospitals, factories, estates and institutions.",
+    "covers": [
+      "CCTV system design and planning",
+      "Camera supply and installation",
+      "DVR/NVR recording systems",
+      "Remote viewing and monitoring setup",
+      "Security system configuration",
+      "Maintenance, upgrades and troubleshooting"
+    ],
+    "note": "Often combined with access control, intercom and electric fence systems.",
+    "card_bullets": [
+      "System design, cameras and DVR/NVR",
+      "Remote viewing setup",
+      "Maintenance and upgrades"
+    ]
+  },
+  "solar": {
+    "lead": "Solar and backup power systems designed around your requirements. We approach solar as a system, not a product sale.",
+    "covers": [
+      "Solar panel installation",
+      "Inverter systems",
+      "Battery storage",
+      "Backup power systems",
+      "Solar system design",
+      "Configuration, maintenance, troubleshooting and upgrades"
+    ],
+    "note": "System capacity and performance depend on your load requirements and the equipment specified.",
+    "card_bullets": [
+      "Panels, inverters and battery storage",
+      "Designed around your load requirements",
+      "Configuration and support"
+    ]
+  },
+  "maintenance": {
+    "lead": "Installation is not the end of the relationship. DESS supports existing systems so they keep performing, which matters most for commercial and institutional sites.",
+    "covers": [
+      "Preventive maintenance",
+      "System inspection",
+      "Troubleshooting",
+      "Repairs where applicable",
+      "System optimization",
+      "Upgrades and technical support"
+    ],
+    "note": "Covers solar, CCTV, connectivity and other relevant installed technology.",
+    "card_bullets": [
+      "Preventive maintenance and inspection",
+      "Troubleshooting and repairs",
+      "Upgrades and technical support"
+    ]
+  },
+  "consultation": {
+    "lead": "Work out the right technical solution before you purchase equipment or begin installation. We act as a technical partner, not only an installer.",
+    "covers": [
+      "Solar power requirements",
+      "CCTV and security planning",
+      "Connectivity",
+      "System upgrades",
+      "Maintenance planning",
+      "Technology infrastructure and installation planning"
+    ],
+    "note": "Phone consultations are free. Site consultations are paid, and the price depends on the location. Consultation can lead into design, supply, installation and ongoing support.",
+    "card_bullets": [
+      "Solar, CCTV and connectivity planning",
+      "Before you buy equipment",
+      "Installation planning"
+    ]
+  },
+  "additional": [
+    "Starlink installation and activation",
+    "Intercom installation",
+    "Digital door locks",
+    "Access control",
+    "Electric fence systems",
+    "Networking",
+    "Wi-Fi infrastructure",
+    "Electrical installation and maintenance"
+  ]
+}
