@@ -372,6 +372,8 @@ if UPD:
         figs = ''.join('<figure><img src="%s" alt="%s" loading="lazy" decoding="async"></figure>' % (EA(p), EA('%s, photo %d' % (d['title'], i + 1))) for i, p in enumerate(d['photos']))
         return '<article class="upd-item" id="%s"><p class="meta2">%s</p><h2>%s</h2>%s%s</article>' % (EA(d['_id']), meta, E(d['title']), paras, ('<div class="upd-photos">' + figs + '</div>') if figs else '')
     open(O + 'updates.html', 'w').write(head('Project Updates | DESS', 'Latest solar, CCTV and connectivity project updates from Dabo Energy &amp; Security Solutions (DESS).', '/updates') + '<section class="phero"><div class="wrap"><p class="eyebrow">Projects</p><h1>Project updates</h1><p class="lead">Recent work from the DESS team.</p></div></section>\n<section class="sec"><div class="wrap narrow">' + ''.join(_uitem(d) for d in UPD) + '</div></section>\n' + CTA + FOOT)
+else:
+    open(O + 'updates.html', 'w').write(head('Project Updates | DESS', 'Project updates from Dabo Energy &amp; Security Solutions (DESS).', '/updates', '<meta name="robots" content="noindex">\n') + '<section class="phero"><div class="wrap"><p class="eyebrow">Projects</p><h1>Project updates</h1><p class="lead">New project updates will appear here soon.</p></div></section>\n' + CTA + FOOT)
 urls=['/','/cctv','/solar','/maintenance','/consultation','/blog']+(['/updates'] if UPD else [])+['/blog-'+p['slug'] for p in BP]
 open(O+'sitemap.xml','w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>{B}{u}</loc><lastmod>2026-10-06</lastmod></url>\n' for u in urls)+'</urlset>\n')
 open(O+'robots.txt','w').write(f'User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: {B}/sitemap.xml\n')
