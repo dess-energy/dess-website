@@ -101,6 +101,16 @@ collections:
     - label: Email
       name: email
       widget: string
+    - label: Second phone (as shown to visitors)
+      name: phone2_display
+      widget: string
+      required: false
+      hint: 'Optional. Leave empty to hide it. Example: +234 800 000 0001'
+    - label: Second phone (international format, no spaces)
+      name: phone2_e164
+      widget: string
+      required: false
+      hint: 'Optional. Example: +2348000000001'
     - label: Kano address
       name: kano_address
       widget: string
@@ -309,6 +319,187 @@ collections:
       field:
         label: Service
         name: item
+        widget: string
+  - name: photos
+    label: Site photos
+    file: content/photos.json
+    fields:
+    - label: Homepage slideshow (1 to 6 photos)
+      name: hero
+      widget: list
+      min: 1
+      max: 6
+      summary: '{{fields.caption}}'
+      fields:
+      - label: Photo
+        name: image
+        widget: image
+      - label: Caption shown under the buttons
+        name: caption
+        widget: string
+      - label: Which part of the photo to keep
+        name: focus
+        widget: select
+        options: &id001
+        - label: Automatic
+          value: auto
+        - label: Top
+          value: top
+        - label: Upper middle
+          value: upper
+        - label: Middle
+          value: center
+        - label: Bottom
+          value: bottom
+        default: auto
+        hint: Photos are cropped to fit. Pick the part that matters, like the top for people.
+    - label: Service cards on the homepage
+      name: service_cards
+      widget: object
+      fields:
+      - label: CCTV and security
+        name: cctv
+        widget: object
+        fields:
+        - label: Photo
+          name: image
+          widget: image
+          required: true
+        - label: Which part of the photo to keep
+          name: focus
+          widget: select
+          options: *id001
+          default: auto
+          hint: Photos are cropped to fit. Pick the part that matters, like the top for people.
+        - label: Short description (for screen readers)
+          name: alt
+          widget: string
+      - label: Solar power
+        name: solar
+        widget: object
+        fields:
+        - label: Photo
+          name: image
+          widget: image
+          required: true
+        - label: Which part of the photo to keep
+          name: focus
+          widget: select
+          options: *id001
+          default: auto
+          hint: Photos are cropped to fit. Pick the part that matters, like the top for people.
+        - label: Short description (for screen readers)
+          name: alt
+          widget: string
+      - label: Maintenance
+        name: maintenance
+        widget: object
+        fields:
+        - label: Photo
+          name: image
+          widget: image
+          required: true
+        - label: Which part of the photo to keep
+          name: focus
+          widget: select
+          options: *id001
+          default: auto
+          hint: Photos are cropped to fit. Pick the part that matters, like the top for people.
+        - label: Short description (for screen readers)
+          name: alt
+          widget: string
+      - label: Technical consultation
+        name: consultation
+        widget: object
+        fields:
+        - label: Photo
+          name: image
+          widget: image
+          required: true
+        - label: Which part of the photo to keep
+          name: focus
+          widget: select
+          options: *id001
+          default: auto
+          hint: Photos are cropped to fit. Pick the part that matters, like the top for people.
+        - label: Short description (for screen readers)
+          name: alt
+          widget: string
+    - label: Photos on each service page
+      name: service_pages
+      widget: object
+      fields:
+      - label: CCTV and security
+        name: cctv
+        widget: object
+        fields:
+        - label: Photo (leave empty for none)
+          name: image
+          widget: image
+          required: false
+        - label: Short description
+          name: alt
+          widget: string
+          required: false
+      - label: Solar power
+        name: solar
+        widget: object
+        fields:
+        - label: Photo (leave empty for none)
+          name: image
+          widget: image
+          required: false
+        - label: Short description
+          name: alt
+          widget: string
+          required: false
+      - label: Maintenance
+        name: maintenance
+        widget: object
+        fields:
+        - label: Photo (leave empty for none)
+          name: image
+          widget: image
+          required: false
+        - label: Short description
+          name: alt
+          widget: string
+          required: false
+      - label: Technical consultation
+        name: consultation
+        widget: object
+        fields:
+        - label: Photo (leave empty for none)
+          name: image
+          widget: image
+          required: false
+        - label: Short description
+          name: alt
+          widget: string
+          required: false
+    - label: Our work gallery (1 to 12 photos)
+      name: gallery
+      widget: list
+      min: 1
+      max: 12
+      summary: '{{fields.category}}'
+      fields:
+      - label: Photo
+        name: image
+        widget: image
+      - label: Category
+        name: category
+        widget: select
+        options:
+        - Solar
+        - CCTV
+        - Starlink
+        - Maintenance
+        - Consultation
+        - Other
+        default: Solar
+      - label: Short description
+        name: alt
         widget: string
   - name: testimonials
     label: Testimonials
