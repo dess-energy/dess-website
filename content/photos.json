@@ -18,12 +18,12 @@
   ],
   "service_cards": {
     "cctv": {
-      "image": "/cctv-gate.jpg",
-      "focus": "top",
+      "image": "/images/uploads/img_9796.webp",
+      "focus": "upper",
       "alt": "Technician installing two CCTV cameras on a gate pillar"
     },
     "solar": {
-      "image": "/solar-inverter.jpg",
+      "image": "/images/uploads/img_9826.webp",
       "focus": "upper",
       "alt": "Solar inverter and battery storage racks in a plant room"
     },
