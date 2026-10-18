@@ -19,7 +19,7 @@
   "service_cards": {
     "cctv": {
       "image": "/images/uploads/img_9796.webp",
-      "focus": "upper",
+      "focus": "top",
       "alt": "Technician installing two CCTV cameras on a gate pillar"
     },
     "solar": {
