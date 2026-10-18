@@ -1,0 +1,76 @@
+{
+  "hero": [
+    {
+      "image": "/hero-solar.jpg",
+      "caption": "Solar power",
+      "focus": "auto"
+    },
+    {
+      "image": "/cctv-gate.jpg",
+      "caption": "CCTV & security",
+      "focus": "auto"
+    },
+    {
+      "image": "/starlink-install.jpg",
+      "caption": "Starlink connectivity",
+      "focus": "auto"
+    }
+  ],
+  "service_cards": {
+    "cctv": {
+      "image": "/cctv-gate.jpg",
+      "focus": "top",
+      "alt": "Technician installing two CCTV cameras on a gate pillar"
+    },
+    "solar": {
+      "image": "/solar-inverter.jpg",
+      "focus": "upper",
+      "alt": "Solar inverter and battery storage racks in a plant room"
+    },
+    "maintenance": {
+      "image": "/solar-roof.jpg",
+      "focus": "center",
+      "alt": "Technician handling cabling on a rooftop solar array"
+    },
+    "consultation": {
+      "image": "/technician.jpg",
+      "focus": "top",
+      "alt": "DESS technician on site in a safety helmet and vest"
+    }
+  },
+  "service_pages": {
+    "cctv": {
+      "image": "/cctv-gate.jpg",
+      "alt": "Technician installing two CCTV cameras on a gate pillar beside an electric fence"
+    },
+    "solar": {
+      "image": "/solar-inverter.jpg",
+      "alt": "Solar inverter and battery storage racks installed in a plant room"
+    },
+    "maintenance": {
+      "image": "/technician.jpg",
+      "alt": "DESS technician on site wearing a safety helmet and high-visibility vest"
+    },
+    "consultation": {
+      "image": "",
+      "alt": ""
+    }
+  },
+  "gallery": [
+    {
+      "image": "/solar-inverter.jpg",
+      "category": "Solar",
+      "alt": "Solar inverter and battery storage racks installed in a plant room"
+    },
+    {
+      "image": "/cctv-gate.jpg",
+      "category": "CCTV",
+      "alt": "Technician installing two CCTV cameras on a gate pillar beside an electric fence"
+    },
+    {
+      "image": "/starlink-install.jpg",
+      "category": "Starlink",
+      "alt": "Technician on a ladder installing a Starlink dish on a building"
+    }
+  ]
+}
