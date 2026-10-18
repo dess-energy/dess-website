@@ -6,6 +6,11 @@ B = 'https://dess.com.ng'
 E = lambda t: html.escape(str(t), quote=False)
 EA = lambda t: html.escape(str(t), quote=True)
 class BuildError(Exception): pass
+def _hook(t, v, tb):
+    if issubclass(t, BuildError):
+        print('BUILD FAILED, nothing was changed on the website:', v); os._exit(1)
+    sys.__excepthook__(t, v, tb)
+sys.excepthook = _hook
 def _load(name):
     try:
         with open(SRC + 'content/' + name, encoding='utf-8') as f: return json.load(f)
@@ -13,6 +18,24 @@ def _load(name):
         raise BuildError('Cannot read content/%s: %s' % (name, e))
 C = {k: _load(k + '.json') for k in ('site', 'home', 'services', 'testimonials')}
 S, HM = C['site'], C['home']
+DEFAULT_PHOTOS = {
+ "hero": [{"image": "/hero-solar.jpg", "caption": "Solar power", "focus": "auto"}, {"image": "/cctv-gate.jpg", "caption": "CCTV & security", "focus": "auto"}, {"image": "/starlink-install.jpg", "caption": "Starlink connectivity", "focus": "auto"}],
+ "service_cards": {
+  "cctv": {"image": "/cctv-gate.jpg", "focus": "top", "alt": "Technician installing two CCTV cameras on a gate pillar"},
+  "solar": {"image": "/solar-inverter.jpg", "focus": "upper", "alt": "Solar inverter and battery storage racks in a plant room"},
+  "maintenance": {"image": "/solar-roof.jpg", "focus": "center", "alt": "Technician handling cabling on a rooftop solar array"},
+  "consultation": {"image": "/technician.jpg", "focus": "top", "alt": "DESS technician on site in a safety helmet and vest"}},
+ "service_pages": {
+  "cctv": {"image": "/cctv-gate.jpg", "alt": "Technician installing two CCTV cameras on a gate pillar beside an electric fence"},
+  "solar": {"image": "/solar-inverter.jpg", "alt": "Solar inverter and battery storage racks installed in a plant room"},
+  "maintenance": {"image": "/technician.jpg", "alt": "DESS technician on site wearing a safety helmet and high-visibility vest"},
+  "consultation": {"image": "", "alt": ""}},
+ "gallery": [
+  {"image": "/solar-inverter.jpg", "category": "Solar", "alt": "Solar inverter and battery storage racks installed in a plant room"},
+  {"image": "/cctv-gate.jpg", "category": "CCTV", "alt": "Technician installing two CCTV cameras on a gate pillar beside an electric fence"},
+  {"image": "/starlink-install.jpg", "category": "Starlink", "alt": "Technician on a ladder installing a Starlink dish on a building"}]}
+PHO = _load('photos.json') if os.path.exists(SRC + 'content/photos.json') else DEFAULT_PHOTOS
+FOCUS = {'auto': None, 'top': '50% 22%', 'upper': '50% 35%', 'center': '50% 50%', 'bottom': '50% 80%'}
 def _need(cond, msg):
     if not cond: raise BuildError(msg)
 def _text(v, label, maxlen=2500, required=True):
@@ -45,12 +68,26 @@ def validate_content():
     for t in C['testimonials']['items']:
         _text(t.get('name'), 'Testimonial name', 60); _text(t.get('quote'), 'Testimonial quote', 500)
         _need(t.get('language', 'en') in ('en','ha','pcm'), 'Testimonial language must be en, ha or pcm')
+    if S.get('phone2_e164') or S.get('phone2_display'):
+        _need(re.fullmatch(r'\+\d{8,15}', S.get('phone2_e164', '')) and _text(S.get('phone2_display', ''), 'Second phone', 40), 'Settings: the second phone needs both a display number and an international number like +2348000000000')
+    def _img(v, label, required=True):
+        if not v:
+            _need(not required, label + ' needs a photo'); return
+        _need(isinstance(v, str) and re.fullmatch(r'/(images/uploads/)?[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp)', v), label + ': photo path is not allowed: ' + str(v))
+        _need(os.path.exists(SRC + v.lstrip('/')), label + ': photo file is missing from the repository: ' + v)
+    _need(1 <= len(PHO['hero']) <= 6, 'Site photos: the homepage slideshow needs 1 to 6 photos')
+    for i, h in enumerate(PHO['hero']): _img(h.get('image'), 'Slideshow photo %d' % (i + 1)); _text(h.get('caption'), 'Slideshow caption %d' % (i + 1), 60); _need(h.get('focus', 'auto') in FOCUS, 'Slideshow focus is not valid')
+    for k in ('cctv', 'solar', 'maintenance', 'consultation'):
+        v = PHO['service_cards'][k]; _img(v.get('image'), k + ' card photo'); _text(v.get('alt'), k + ' card photo description', 160); _need(v.get('focus', 'auto') in FOCUS, k + ' focus is not valid')
+        v = PHO['service_pages'][k]; _img(v.get('image'), k + ' page photo', False); _text(v.get('alt', ''), k + ' page photo description', 160, False)
+    _need(1 <= len(PHO['gallery']) <= 12, 'Site photos: the gallery needs 1 to 12 photos')
+    for i, g in enumerate(PHO['gallery']): _img(g.get('image'), 'Gallery photo %d' % (i + 1)); _text(g.get('category'), 'Gallery category %d' % (i + 1), 30); _text(g.get('alt'), 'Gallery description %d' % (i + 1), 160)
 try:
     validate_content()
 except BuildError as _e:
     print('BUILD FAILED, nothing was changed on the website:', _e); sys.exit(1)
 TEL = S['phone_e164']; WA = 'https://wa.me/' + S['whatsapp_number']; MAIL = S['email']
-SITEJS = json.dumps({'wa': S['whatsapp_number'], 'phone': S['phone_display'], 'email': S['email']}).replace('<', '\\u003c')
+SITEJS = json.dumps({'wa': S['whatsapp_number'], 'phone': S['phone_display'], 'email': S['email'], 'phone2': S.get('phone2_display', '')}).replace('<', '\\u003c')
 SOC=f'''<div class="social"><a href="{WA}" target="_blank" rel="noopener" aria-label="DESS on WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a><a href="https://www.facebook.com/daboenergy.ss" target="_blank" rel="noopener" aria-label="DESS on Facebook"><svg class="ico"><use href="#i-fb"/></svg></a><a href="https://www.instagram.com/dabo_energy_ss" target="_blank" rel="noopener" aria-label="DESS on Instagram"><svg class="ico"><use href="#i-ig"/></svg></a><a href="https://www.tiktok.com/@dabo_ess" target="_blank" rel="noopener" aria-label="DESS on TikTok"><svg class="ico"><use href="#i-tt"/></svg></a><a href="https://x.com/dabo_energy_ss" target="_blank" rel="noopener" aria-label="DESS on X"><svg class="ico"><use href="#i-x"/></svg></a></div>'''
 from urllib.parse import quote
 _Q=[('I need a CCTV system installed','Hello DESS, I need a CCTV / security system installed.'),('I need solar or backup power','Hello DESS, I need a solar / backup power system.'),('I need maintenance for an existing system','Hello DESS, I need maintenance for an existing system.'),('I need Starlink installation','Hello DESS, I need a Starlink installation.'),('I want a technical consultation','Hello DESS, I would like a technical consultation.')]
@@ -111,7 +148,7 @@ def head(title,desc,path,extra='',ld=''):
 <header class="nav"><div class="progress" aria-hidden="true"></div><div class="wrap nav-in">
 <a href="/" class="brand" aria-label="DESS home"><img src="/logo.png" alt="DESS - Dabo Energy &amp; Security Solutions logo" width="900" height="174"></a>
 <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
-<nav id="menu" class="menu" aria-label="Main"><div class="drawer-head"><span>Menu</span><button type="button" class="drawer-x" aria-label="Close menu">&times;</button></div><a href="/" class="m-home">Home</a><a href="/#solutions">Solutions</a><a href="/#why">Why DESS</a><a href="/#projects">Projects</a><a href="/blog">Blog</a><a href="/#faq">FAQ</a><a href="/#contact">Contact</a><a href="/#contact" class="btn btn-gold nav-cta">Get a Free Consultation</a><div class="drawer-foot"><a href="/#contact" class="btn btn-gold">Get a Free Consultation</a><a href="{WA}" class="btn btn-wa">Chat on WhatsApp</a><p><a href="mailto:{MAIL}">{MAIL}</a><a href="tel:{TEL}">+234 904 981 1269</a></p>{SOC}</div></nav>
+<nav id="menu" class="menu" aria-label="Main"><div class="drawer-head"><span>Menu</span><button type="button" class="drawer-x" aria-label="Close menu">&times;</button></div><a href="/" class="m-home">Home</a><a href="/#solutions">Solutions</a><a href="/#why">Why DESS</a><a href="/#projects">Projects</a><a href="/blog">Blog</a><a href="/#faq">FAQ</a><a href="/#contact">Contact</a><a href="/#contact" class="btn btn-gold nav-cta">Get a Free Consultation</a><div class="drawer-foot"><a href="/#contact" class="btn btn-gold">Get a Free Consultation</a><div class="dbtns"><a href="{WA}" class="btn btn-wa"><svg class="ico"><use href="#i-wa"/></svg>WhatsApp</a><a href="tel:{TEL}" class="btn btn-glass"><svg class="ico"><use href="#i-phone"/></svg>Call</a></div><p><a href="mailto:{MAIL}">{MAIL}</a><a href="tel:{TEL}">+234 904 981 1269</a></p>{SOC}</div></nav>
 </div></header>
 <div class="scrim" aria-hidden="true"></div>
 <main id="main">
@@ -168,6 +205,8 @@ dict(slug='consultation',n='04',ic='i-chat',name='Technical Consultation',t='Tec
 for p in P:
     _sv = C['services'][p['slug']]; p['lead'] = E(_sv['lead']); p['cov'] = [E(x) for x in _sv['covers']]; p['rel'] = E(_sv['note'])
 BUL = [[E(x) for x in C['services'][p['slug']]['card_bullets']] for p in P]
+for p in P:
+    _sp = PHO['service_pages'][p['slug']]; p['img'] = (_sp.get('image') or '').lstrip('/') or None; p['alt'] = EA(_sp.get('alt', ''))
 for p in P:
     fig=f'<figure class="media"><img src="/{p["img"]}" alt="{p["alt"]}" loading="lazy" decoding="async"></figure>' if p['img'] else ''
     h=head(p['t'],p['d'],'/'+p['slug'])+f'''<section class="phero"><div class="wrap"><p class="eyebrow"><a href="/#solutions">Solutions</a> / {p['n']}</p><h1>{p['name']}</h1><p class="lead">{p['lead']}</p>{BTNS}</div></section>
@@ -241,6 +280,7 @@ ld=json.dumps({"@context":"https://schema.org","@type":["LocalBusiness","Organiz
 "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"09:00","closes":"17:00"}],"sameAs":["https://www.facebook.com/daboenergy.ss","https://www.instagram.com/dabo_energy_ss","https://x.com/dabo_energy_ss","https://www.tiktok.com/@dabo_ess"]},indent=1,ensure_ascii=False)
 ver='<meta name="google-site-verification" content="Flggp0OAoR3ZLfkzdXoOFVyLNwlf65vivNqHBnzhyiU" />\n<meta name="google-site-verification" content="FNXQPSIhmZA32Rh-jYoWv8A7KRaA6-WDHWeEcsu5f3Y" />\n'
 IMGS={'cctv':('cctv-gate.jpg','50% 22%','Technician installing two CCTV cameras on a gate pillar'),'solar':('solar-inverter.jpg','50% 35%','Solar inverter and battery storage racks in a plant room'),'maintenance':('solar-roof.jpg','50% 50%','Technician handling cabling on a rooftop solar array'),'consultation':('technician.jpg','50% 22%','DESS technician on site in a safety helmet and vest')}
+IMGS = {k: (v['image'].lstrip('/'), FOCUS.get(v.get('focus') or 'auto') or '50% 50%', EA(v['alt'])) for k, v in PHO['service_cards'].items()}
 def card(p,b):
     f,pos,alt=IMGS[p['slug']]
     return f'<article class="card pcard"><div class="cimg"><img src="/{f}" alt="{alt}" style="object-position:{pos}" loading="lazy" decoding="async"></div><div class="cbody"><span class="num">{p["n"]}</span><svg class="ico"><use href="#{p["ic"]}"/></svg><h3>{p["name"]}</h3><p>{p["lead"].split(". ")[0].rstrip(".")}.</p>{ul(b)}<a class="more" href="/{p["slug"]}">Explore {p["name"]}</a></div></article>'
@@ -260,6 +300,17 @@ FAQ=[('Do you install solar systems?','Yes. DESS designs and installs solar and 
 ('Can DESS provide technical consultation?','Yes. We can advise on the right solution before you buy equipment or begin installation.'),
 ('Is technical consultation free?','Phone consultations are free. Site consultations are paid, and the price depends on the location.'),
 ('Do you work with hotels, schools and hospitals?','We are equipped to serve these sectors. Requirements differ between them, so we begin by understanding your premises and needs.')]
+def _fstyle(f):
+    v = FOCUS.get(f or 'auto')
+    return ' style="object-position:%s"' % v if v else ''
+def _dims(path):
+    try:
+        from PIL import Image as _PI
+        with _PI.open(SRC + path.lstrip('/')) as im: return ' width="%d" height="%d"' % im.size
+    except Exception: return ''
+HEROIMGS = ''.join('<img%s src="%s" alt=""%s data-cap="%s"%s>' % (' class="on"' if i == 0 else '', EA(h['image']), ' fetchpriority="high"' if i == 0 else ' loading="lazy"', EA(h['caption']), _fstyle(h.get('focus'))) for i, h in enumerate(PHO['hero']))
+HERODOTS = '<div class="hero-dots" aria-hidden="true">' + '<i></i>' * len(PHO['hero']) + '<span class="cap">' + E(PHO['hero'][0]['caption']) + '</span></div>'
+GALLERY = '\n'.join('<figure class="shot" data-category="%s"><img src="%s"%s loading="lazy" decoding="async" alt="%s"><figcaption>%s</figcaption></figure>' % (EA(g['category']), EA(g['image']), _dims(g['image']), EA(g['alt']), E(g['category'])) for g in PHO['gallery'])
 def _stat(x):
     d = str(x['display']).strip(); mm = re.fullmatch(r'(\d+)(\+?)', d)
     if mm: return '<div class="stat"><b data-count="%s" data-suffix="%s">%s</b><span>%s</span></div>' % (mm.group(1), mm.group(2), E(d), E(x['label']))
@@ -327,12 +378,12 @@ def _ucard(d):
     img = '<img src="%s" alt="%s" loading="lazy" decoding="async">' % (EA(d['photos'][0]), EA(d['title'])) if d['photos'] else ''
     short = d['summary'].strip().split('\n')[0]
     short = short if len(short) <= 150 else short[:147].rsplit(' ', 1)[0] + '...'
-    return '<a class="bcard" href="/updates#%s"><div class="bimg%s">%s<span class="btag">%s</span></div><div class="bbody"><h3>%s</h3><p>%s</p><span class="more">Read the update</span></div></a>' % (EA(d['_id']), '' if img else ' noimg', img, E(d.get('category', 'Other')), E(d['title']), E(short))
+    return '<a class="bcard" href="/updates#%s"><div class="bimg%s">%s<span class="btag">%s</span></div><div class="bbody"><h3>%s</h3><p>%s</p><span class="more">Read more</span></div></a>' % (EA(d['_id']), '' if img else ' noimg', img, E(d.get('category', 'Other')), E(d['title']), E(short))
 UPDSEC = ('<div class="upd"><h3 class="sub">Latest project updates</h3><div class="bgrid three">' + ''.join(_ucard(d) for d in UPD[:3]) + '</div><p style="margin-top:22px"><a class="btn btn-blue" href="/updates">View all updates</a></p></div>') if UPD else ''
 H=head('DESS | Dabo Energy &amp; Security Solutions: CCTV, Solar &amp; Maintenance','DESS (Dabo Energy &amp; Security Solutions) provides CCTV, solar power, maintenance, technical consultation and Starlink services for homes, businesses and institutions in Kano, Abuja and across Nigeria.','/',ver,f'<script type="application/ld+json">\n{ld}\n</script>\n'+'<script type="application/ld+json">'+'{"@context": "https://schema.org", "@type": "WebSite", "name": "Dabo Energy & Security Solutions", "alternateName": ["DESS", "DESS Nigeria", "Dabo Energy and Security Solutions"], "url": "https://dess.com.ng/"}'+'</script>\n')
-H+=f'''<section class="hero"><div class="hero-bg"><img class="on" src="/hero-solar.jpg" alt="" fetchpriority="high" data-cap="Solar power"><img src="/cctv-gate.jpg" alt="" loading="lazy" data-cap="CCTV &amp; security"><img src="/starlink-install.jpg" alt="" loading="lazy" data-cap="Starlink connectivity"></div><div class="wrap hero-in"><div>
+H+=f'''<section class="hero"><div class="hero-bg">{HEROIMGS}</div><div class="wrap hero-in"><div>
 <p class="eyebrow">{E(HM["eyebrow"])}</p><h1>{E(HM["h1_line1"])} <span class="gold">{E(HM["h1_gold"])}</span></h1>
-<p class="lead">{E(HM["lead"])}</p>{BTNS}<div class="hero-dots" aria-hidden="true"><i></i><i></i><i></i><span class="cap">Solar power</span></div></div></div></section>
+<p class="lead">{E(HM["lead"])}</p>{BTNS}{HERODOTS}</div></div></section>
 <section class="stats" aria-label="DESS in numbers"><div class="wrap stats-in">{STATS}</div></section>
 <section class="sec" id="solutions"><div class="wrap"><p class="eyebrow">Primary solutions</p><h2>Systems designed around your requirements</h2><div class="pgrid">{''.join(card(p,b) for p,b in zip(P,BUL))}</div></div></section>
 <section class="sec dark" id="serve"><div class="wrap"><p class="eyebrow">Who we serve</p><h2>Built for homes, businesses and institutions</h2><div class="tiles">{''.join(f'<div class="tile"><span class="ti"><svg class="ico"><use href="#i-{k}"/></svg></span><b>{n}</b></div>' for k,n in SERVE)}</div></div></section>
@@ -341,9 +392,7 @@ H+=f'''<section class="hero"><div class="hero-bg"><img class="on" src="/hero-sol
 <h3 class="sub">Brands and technologies we work with include</h3><div class="mq"><div class="mq-track">{LOGOS}{LOGOS2}</div></div><p class="note">Logos are trademarks of their respective owners, shown to indicate the equipment we work with. They do not imply endorsement or official partnership. Equipment is specified according to project requirements.</p></div></section>
 <section class="sec dark proc" id="process"><div class="wrap proc-in"><div class="proc-l"><p class="eyebrow">How we work</p><h2>From first conversation to handover</h2><p class="big">Six clear steps, so you always know what happens next.</p><a href="/#contact" class="btn btn-gold">Start with a free consultation</a></div>{TLH}</div></section>
 <section class="sec" id="projects"><div class="wrap"><p class="eyebrow">Projects</p><h2>Our work</h2>{CASE}<div class="gallery">
-<figure class="shot" data-category="Solar"><img src="/solar-inverter.jpg" width="800" height="1290" loading="lazy" decoding="async" alt="Solar inverter and battery storage racks installed in a plant room"><figcaption>Solar</figcaption></figure>
-<figure class="shot" data-category="CCTV"><img src="/cctv-gate.jpg" width="800" height="1275" loading="lazy" decoding="async" alt="Technician installing two CCTV cameras on a gate pillar beside an electric fence"><figcaption>CCTV</figcaption></figure>
-<figure class="shot" data-category="Starlink"><img src="/starlink-install.jpg" width="900" height="600" loading="lazy" decoding="async" alt="Technician on a ladder installing a Starlink dish on a building"><figcaption>Starlink</figcaption></figure></div>
+{GALLERY}</div>
 <!-- Future case study card: category, location, client type, scope, challenge, solution, result, photos/video -->
 <p class="note">More project case studies will be added here.</p>{UPDSEC}</div></section>
 <section class="sec tint" id="testimonials"><div class="wrap"><p class="eyebrow">Testimonials</p><h2>What customers say</h2><div class="quotes">{''.join(f'<blockquote class="quote"><p lang="{l}">{t}</p><cite>{n}</cite></blockquote>' for n,t,l in Q)}</div></div></section>
@@ -384,6 +433,13 @@ DEF = {'phone_display': '+234 904 981 1269', 'phone_e164': '+2349049811269', 'wh
        'hours_main': 'Monday to Saturday, 9:00 AM to 5:00 PM', 'hours_note': 'Sunday emergency work may be available by arrangement', 'hours_short': 'Mon to Sat, 9:00 AM to 5:00 PM',
        'facebook': 'https://www.facebook.com/daboenergy.ss', 'instagram': 'https://www.instagram.com/dabo_energy_ss', 'x': 'https://x.com/dabo_energy_ss', 'tiktok': 'https://www.tiktok.com/@dabo_ess'}
 def fix(t):
+    if S.get('phone2_e164') and S.get('phone2_display'):
+        p2e, p2d = S['phone2_e164'], E(S['phone2_display'])
+        a1 = '<li><svg class="ico"><use href="#i-phone"/></svg><a href="tel:+2349049811269">+234 904 981 1269</a></li>'
+        t = t.replace(a1, a1 + '<li><svg class="ico"><use href="#i-phone"/></svg><a href="tel:%s">%s</a></li>' % (p2e, p2d))
+        t = t.replace('<a href="tel:+2349049811269">+234 904 981 1269</a><a href="mailto:daboenergyss@gmail.com">', '<a href="tel:+2349049811269">+234 904 981 1269</a><a href="tel:%s">%s</a><a href="mailto:daboenergyss@gmail.com">' % (p2e, p2d))
+        t = t.replace('<a href="tel:+2349049811269">+234 904 981 1269</a></p>', '<a href="tel:+2349049811269">+234 904 981 1269</a><a href="tel:%s">%s</a></p>' % (p2e, p2d))
+        t = t.replace('"telephone": "+2349049811269"', '"telephone": ["+2349049811269", "%s"]' % p2e)
     pairs = [('wa.me/' + DEF['whatsapp_number'], 'wa.me/' + S['whatsapp_number']), (DEF['phone_e164'], S['phone_e164']), (DEF['phone_display'], E(S['phone_display'])), (DEF['email'], S['email'])]
     for k in ('kano_address', 'mararaba_address', 'hours_main', 'hours_note', 'hours_short'): pairs.append((DEF[k], E(S[k])))
     for k in ('facebook', 'instagram', 'x', 'tiktok'): pairs.append((DEF[k], EA(S[k])))
