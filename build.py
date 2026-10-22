@@ -81,6 +81,9 @@ def validate_content():
         v = PHO['service_cards'][k]; _img(v.get('image'), k + ' card photo'); _text(v.get('alt'), k + ' card photo description', 160); _need(v.get('focus', 'auto') in FOCUS, k + ' focus is not valid')
         v = PHO['service_pages'][k]; _img(v.get('image'), k + ' page photo', False); _text(v.get('alt', ''), k + ' page photo description', 160, False)
     _need(1 <= len(PHO['gallery']) <= 12, 'Site photos: the gallery needs 1 to 12 photos')
+    _shots = C['testimonials'].get('screenshots') or []
+    _need(len(_shots) <= 8, 'Testimonials: at most 8 WhatsApp screenshots')
+    for i, g in enumerate(_shots): _img(g.get('image'), 'WhatsApp screenshot %d' % (i + 1)); _text(g.get('caption', '') or '', 'WhatsApp screenshot caption %d' % (i + 1), 80, False)
     for i, g in enumerate(PHO['gallery']): _img(g.get('image'), 'Gallery photo %d' % (i + 1)); _text(g.get('category'), 'Gallery category %d' % (i + 1), 30); _text(g.get('alt'), 'Gallery description %d' % (i + 1), 160)
 try:
     validate_content()
@@ -311,6 +314,12 @@ def _dims(path):
 HEROIMGS = ''.join('<img%s src="%s" alt=""%s data-cap="%s"%s>' % (' class="on"' if i == 0 else '', EA(h['image']), ' fetchpriority="high"' if i == 0 else ' loading="lazy"', EA(h['caption']), _fstyle(h.get('focus'))) for i, h in enumerate(PHO['hero']))
 HERODOTS = '<div class="hero-dots" aria-hidden="true">' + '<i></i>' * len(PHO['hero']) + '<span class="cap">' + E(PHO['hero'][0]['caption']) + '</span></div>'
 GALLERY = '\n'.join('<figure class="shot" data-category="%s"><img src="%s"%s loading="lazy" decoding="async" alt="%s"><figcaption>%s</figcaption></figure>' % (EA(g['category']), EA(g['image']), _dims(g['image']), EA(g['alt']), E(g['category'])) for g in PHO['gallery'])
+def _shot(i, g):
+    cap = (g.get('caption') or '').strip()
+    alt = 'WhatsApp message from a customer' + (': ' + cap if cap else '') + ' (photo %d)' % (i + 1)
+    return '<figure class="wa-card"><button type="button" class="wa-shot" data-full="%s" aria-label="Enlarge screenshot %d"><img src="%s"%s alt="%s" loading="lazy" decoding="async"></button>%s</figure>' % (EA(g['image']), i + 1, EA(g['image']), _dims(g['image']), EA(alt), ('<figcaption>%s</figcaption>' % E(cap)) if cap else '')
+_SH = C['testimonials'].get('screenshots') or []
+WASEC = ('<div class="wa-reviews"><h3 class="sub">Real messages from customers on WhatsApp</h3><div class="wa-row">' + ''.join(_shot(i, g) for i, g in enumerate(_SH)) + '</div></div>') if _SH else ''
 def _stat(x):
     d = str(x['display']).strip(); mm = re.fullmatch(r'(\d+)(\+?)', d)
     if mm: return '<div class="stat"><b data-count="%s" data-suffix="%s">%s</b><span>%s</span></div>' % (mm.group(1), mm.group(2), E(d), E(x['label']))
@@ -395,7 +404,7 @@ H+=f'''<section class="hero"><div class="hero-bg">{HEROIMGS}</div><div class="wr
 {GALLERY}</div>
 <!-- Future case study card: category, location, client type, scope, challenge, solution, result, photos/video -->
 <p class="note">More project case studies will be added here.</p>{UPDSEC}</div></section>
-<section class="sec tint" id="testimonials"><div class="wrap"><p class="eyebrow">Testimonials</p><h2>What customers say</h2><div class="quotes">{''.join(f'<blockquote class="quote"><p lang="{l}">{t}</p><cite>{n}</cite></blockquote>' for n,t,l in Q)}</div></div></section>
+<section class="sec tint" id="testimonials"><div class="wrap"><p class="eyebrow">Testimonials</p><h2>What customers say</h2><div class="quotes">{''.join(f'<blockquote class="quote"><p lang="{l}">{t}</p><cite>{n}</cite></blockquote>' for n,t,l in Q)}</div>{WASEC}</div></section>
 <section class="sec dark globe-sec" id="coverage"><div class="wrap globe-in"><div><p class="eyebrow">Where we work</p><h2>Based in Kano and Mararaba. Working nationwide.</h2><ul class="locs"><li><b>Kano</b><span>No. 35 France Road, Sabon Gari, Kano State</span></li><li><b>Mararaba</b><span>Our base for projects across Nasarawa, Abuja and surrounding areas</span></li><li><b>Nationwide &amp; international</b><span>Projects elsewhere are quoted by location, logistics and scope</span></li></ul></div><div class="globe-wrap"><canvas id="globe" role="img" aria-label="Animated globe marking Kano, Abuja and Nasarawa in Nigeria"></canvas></div></div></section>
 <section class="sec" id="faq"><div class="wrap narrow"><p class="eyebrow">FAQ</p><h2>Common questions</h2>{''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in FAQ)}</div></section>
 {BLOGSEC}{CTA}<section class="sec tint" id="contact"><div class="wrap contact"><div><p class="eyebrow">Contact</p><h2>Let’s discuss your project</h2>
