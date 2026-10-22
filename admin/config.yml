@@ -533,3 +533,19 @@ collections:
         name: show
         widget: boolean
         default: true
+    - label: WhatsApp review screenshots
+      name: screenshots
+      widget: list
+      required: false
+      max: 8
+      summary: '{{fields.caption}}'
+      hint: Only add screenshots the customer agreed to share. Cover or crop phone numbers and profile photos first (Photos app, Edit, Markup).
+      fields:
+      - label: Screenshot
+        name: image
+        widget: image
+      - label: Short caption (optional)
+        name: caption
+        widget: string
+        required: false
+        hint: 'For example: Solar customer, Kano. Do not use a full name unless they agreed.'
