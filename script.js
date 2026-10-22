@@ -268,3 +268,16 @@ form && form.addEventListener('submit', async e => {
 
 // lets iPhones show the pressed state on buttons and cards
 document.addEventListener('touchstart', function () {}, { passive: true });
+
+(() => { // enlarge WhatsApp screenshots
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('.wa-shot'); if (!b) return;
+    const box = document.createElement('div'); box.className = 'lightbox'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Screenshot');
+    const im = document.createElement('img'); im.src = b.dataset.full; im.alt = b.querySelector('img').alt;
+    const x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Close'); x.textContent = '\u00d7';
+    const close = () => { box.remove(); document.removeEventListener('keydown', onKey); b.focus(); };
+    const onKey = ev => { if (ev.key === 'Escape') close(); };
+    box.addEventListener('click', close); document.addEventListener('keydown', onKey);
+    box.appendChild(im); box.appendChild(x); document.body.appendChild(box); x.focus();
+  });
+})();
