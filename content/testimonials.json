@@ -4,7 +4,7 @@
       "name": "Ibrahim A.",
       "quote": "DESS did a very neat solar installation. Good service and professional team.",
       "language": "en",
-      "show": true
+      "show": false
     },
     {
       "name": "Musa B.",
@@ -22,7 +22,7 @@
       "name": "Emeka O.",
       "quote": "These guys sabi wetin dem dey do. Fast service and clean installation.",
       "language": "pcm",
-      "show": true
+      "show": false
     }
   ],
   "screenshots": [
