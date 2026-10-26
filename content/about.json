@@ -1,0 +1,40 @@
+{
+  "eyebrow": "Our story",
+  "heading": "Who we are and what we stand for",
+  "background": [
+    "DESS began in response to the challenge of unreliable electricity in Nigeria, and grew as customers asked for more. Today, Dabo Energy & Security Solutions is a technology and systems solutions company providing energy, security, connectivity, maintenance and technical consultation services.",
+    "We operate from Kano and Mararaba, serve Abuja and Nasarawa from our Mararaba base, and accept enquiries across Nigeria. With 7+ years of experience, we approach every job the same way: understand the problem, recommend a practical solution, install and configure it properly, and keep supporting it."
+  ],
+  "founders": "",
+  "expertise_label": "Our expertise",
+  "expertise": [
+    {
+      "title": "CCTV and security systems",
+      "text": "Design, installation, configuration and remote viewing setup, plus fault-finding on existing systems."
+    },
+    {
+      "title": "Solar and backup power",
+      "text": "Assessment-led design, equipment selection, installation, configuration and support."
+    },
+    {
+      "title": "Maintenance and troubleshooting",
+      "text": "Inspection, repairs where applicable, optimisation, upgrades and technical support."
+    },
+    {
+      "title": "Technical consultation",
+      "text": "Honest guidance on the right solution before you buy equipment or start installation."
+    },
+    {
+      "title": "Starlink and connectivity",
+      "text": "Installation, activation help, Wi-Fi and network setup, relocation and mounting."
+    },
+    {
+      "title": "Access control and related systems",
+      "text": "Intercoms, digital door locks, access control and electric fences, subject to assessment."
+    }
+  ],
+  "mission_label": "Our mission",
+  "mission": "To understand each customer's real problem and deliver the right technical solution, with dependable service and lasting value, and to stand by our work after installation.",
+  "image": "",
+  "image_alt": ""
+}
