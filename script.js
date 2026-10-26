@@ -20,7 +20,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.cont
 menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
 
 // Fade-in on scroll
-const items = document.querySelectorAll('.hero-in > div > *, .hero-media, .phero .wrap > *, .sec .eyebrow, .sec h2, .sec .big, .sec .sub, .sec .note, .sec .lead, .card, .why, .step, .tile, .shot, .bcard, .case-v, .case-t > *, .quote, .stat, .chips > *, details, .clist li, .contact form, .cta h2, .cta p, .cta .btns');
+const items = document.querySelectorAll('.hero-in > div > *, .hero-media, .phero .wrap > *, .sec .eyebrow, .sec h2, .sec .big, .sec .sub, .sec .note, .sec .lead, .card, .why, .xp, .mission, .co-text > *, .co-img, .step, .tile, .shot, .bcard, .case-v, .case-t > *, .quote, .stat, .chips > *, details, .clist li, .contact form, .cta h2, .cta p, .cta .btns');
 const idx = new Map();
 items.forEach(el => {
   el.classList.add('reveal');
@@ -158,12 +158,30 @@ form && form.addEventListener('submit', async e => {
     ['hello', ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'sannu', 'how far'], 'Hello! I can answer questions about our services, locations and working hours, or collect your details for a quotation.'],
     ['thanks', ['thanks', 'thank you', 'nagode'], 'You are welcome! Anything else I can help with?']
   ];
+  const DKB = (() => { try { return JSON.parse(document.getElementById('dess-kb').textContent); } catch (e) { return {}; } })();
+  const AB = DKB.about || {};
+  const esc2 = t => String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const aboutAns = esc2((AB.background && AB.background[0]) || 'DESS (Dabo Energy & Security Solutions) is a technology and systems solutions company providing energy, security, connectivity, maintenance and technical consultation services.') + (AB.founders ? ' ' + esc2(AB.founders) : '') + ' <a href="/#company">Read our story</a>';
+  const expAns = 'Our expertise covers ' + ((AB.expertise || []).map(x => esc2(x.title).toLowerCase()).join(', ') || 'CCTV and security, solar and backup power, maintenance and technical consultation') + '. <a href="/#company">See the details</a>';
+  const missionAns = esc2(AB.mission || 'To understand each customer\u2019s real problem and deliver the right technical solution, with dependable service and lasting value.');
+  const whyAns = 'What people value about DESS: ' + ((DKB.why || []).map(x => esc2(x.title).toLowerCase()).join(', ') || 'a technical approach, professional installation and support beyond installation') + '. <a href="/#why">See why DESS</a>';
+  const si = KB.findIndex(k => k[0] === 'sectors');
+  KB.splice(si < 0 ? KB.length : si, 0,
+    ['about', ['about us', 'about dess', 'who are you', 'who is dess', 'what is dess', 'background', 'our story', 'story', 'history', 'how did', 'began', 'founded', 'company profile', 'tell me about'], aboutAns],
+    ['expertise', ['expertise', 'specialise', 'specialize', 'specialty', 'specialities', 'good at', 'skills', 'strengths'], expAns],
+    ['mission', ['mission', 'vision', 'values', 'stand for', 'believe', 'commitment', 'purpose'], missionAns]);
+  KB.push(
+    ['process', ['process', 'how it works', 'how do you work', 'steps', 'procedure', 'how do i start', 'get started', 'what happens next'], 'Our process has six steps: understand your requirements, assess the project, recommend the solution, install and configure it, test and hand over, then support and maintain. To start, call ' + PH + ' or tap Request a quote. <a href="/#process">See the process</a>'],
+    ['why', ['why choose', 'why should i', 'what makes you different', 'better than', 'advantages', 'benefits', 'why dess'], whyAns],
+    ['schedule', ['maintenance plan', 'maintenance contract', 'regular maintenance', 'monthly maintenance', 'service contract', 'annual', 'schedule'], 'We provide maintenance and technical support. For regular visits, such as the monthly checks we carry out for one client in Kaduna, the team agrees the schedule with you after assessing the system. Call ' + PH + ' to discuss.'],
+    ['unknown', ['job', 'jobs', 'vacancy', 'vacancies', 'career', 'careers', 'internship', 'apprentice', 'hiring', 'training', 'supply only', 'buy only', 'sell equipment', 'do you sell', 'spare parts', 'buy panels', 'buy cameras', 'buy inverter'], 'I do not have confirmed information on that, and I do not want to guess. Please ask the team by phone on ' + PH + '.'],
+    ...(DKB.faq || []).map(f => ['faq', [...new Set(String(f.q).toLowerCase().split(/[^a-z]+/).filter(w => w.length > 3 && !['does', 'have', 'your', 'that', 'this', 'with', 'what', 'when', 'where', 'which', 'will', 'would', 'could', 'should', 'about', 'from', 'into', 'there', 'their', 'they', 'them', 'also', 'dess'].includes(w)))], esc2(f.a)]));
   const CHIPS = [['CCTV', 'CCTV installation'], ['Solar', 'Solar power'], ['Starlink', 'Starlink'], ['Maintenance', 'Maintenance'], ['Hours', 'Working hours'], ['Locations', 'Where are you located?'], ['Price', 'How much does it cost?'], ['Request a quote', 'request a quote']];
   const FALLBACK = 'I am not sure about that one. Tap Request a quote and I will collect your details for the team, or call ' + PH + '.';
   const esc = k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const has = (t, k) => new RegExp('(^|[^a-z])' + esc(k) + 's?([^a-z]|$)').test(t);
   const FORM = 'https://formspree.io/f/xkjowdka';
-  const find = q => { const t = q.toLowerCase(); let best = null, sc = 0; KB.forEach(([id, ks, a]) => { const n = ks.filter(k => has(t, k)).length; if (n > sc) { sc = n; best = [id, a]; } }); return best; };
+  const find = q => { const t = q.toLowerCase(); let best = null, sc = 0; KB.forEach(([id, ks, a]) => { const n = ks.filter(k => has(t, k)).length; if (n > sc && (id !== 'faq' || n >= 2)) { sc = n; best = [id, a]; } }); return best; };
   const add = (cls, html, plain) => { const d = document.createElement('div'); d.className = 'm ' + cls; plain ? d.textContent = html : d.innerHTML = html; msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d; };
   const link = (q, extra) => { start.href = WA + encodeURIComponent('Hello DESS, I was chatting with the website assistant' + (q ? ' about: ' + q : '') + '.' + (extra || '')); };
   const bot = t => add('b', t, true);

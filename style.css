@@ -502,3 +502,26 @@ form .btn{white-space:normal;text-align:center}
 .lightbox img{max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .lightbox button{position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:50%;border:1px solid var(--ln);background:rgba(255,255,255,.1);color:#fff;font-size:1.5rem;cursor:pointer}
 @keyframes fadein{from{opacity:0}}
+
+/* Company story, expertise and mission */
+.company .big{color:#dbe5f5;margin:-12px 0 16px;max-width:46em;font-size:clamp(1.02rem,3.8vw,1.2rem)}
+.company .co-text p{color:#b9c8de;max-width:46em;margin-bottom:12px}
+.company .co-text p.big{color:#e8eefb}
+.founders{font-size:.9rem;font-weight:600;color:var(--gold)!important}
+.co-grid{display:grid;gap:26px;align-items:center}
+.co-img{margin:0}
+.co-img img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:18px;max-height:520px}
+.co-sub{margin:34px 0 14px;color:#9fb1cc}
+.xgrid{display:grid;gap:14px}
+.xp{border:1px solid var(--ln);border-radius:16px;padding:20px;background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.015));transition:border-color .25s ease,transform .25s ease}
+.xp:hover{border-color:rgba(245,179,1,.45)}
+.xp span{font-weight:800;font-size:.78rem;letter-spacing:.12em;color:var(--gold)}
+.xp h3{color:#fff;margin:6px 0 6px}
+.xp p{color:#aebbd1;font-size:.95rem}
+.mission{margin-top:26px;padding:26px 24px;border-radius:18px;background:linear-gradient(120deg,#0b4fb3,#2b3fa8);border-left:4px solid var(--gold)}
+.mission .mlabel{display:block;font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.mission p{color:#fff;font-size:clamp(1.05rem,3.6vw,1.35rem);line-height:1.5;font-weight:600}
+@media(min-width:760px){.xgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:960px){.xgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.co-grid.has-img{grid-template-columns:1.25fr .75fr}.mission{padding:32px 36px}}
+.prose .afig{margin:0 0 24px}
+.prose .afig img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:16px}
