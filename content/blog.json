@@ -1,0 +1,24 @@
+{
+  "images": {
+    "solar-sizing-guide": {
+      "image": "/solar-inverter.jpg",
+      "focus": "auto",
+      "alt": "Solar inverter and battery storage racks installed in a plant room"
+    },
+    "solar-maintenance-checklist": {
+      "image": "/solar-roof.jpg",
+      "focus": "auto",
+      "alt": "Technician handling cabling on a rooftop solar array"
+    },
+    "cctv-camera-planning": {
+      "image": "/cctv-gate.jpg",
+      "focus": "auto",
+      "alt": "Technician installing two CCTV cameras on a gate pillar beside an electric fence"
+    },
+    "cctv-common-problems": {
+      "image": "/technician.jpg",
+      "focus": "auto",
+      "alt": "DESS technician on site wearing a safety helmet and high-visibility vest"
+    }
+  }
+}
