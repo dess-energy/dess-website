@@ -18,6 +18,46 @@ def _load(name):
         raise BuildError('Cannot read content/%s: %s' % (name, e))
 C = {k: _load(k + '.json') for k in ('site', 'home', 'services', 'testimonials')}
 S, HM = C['site'], C['home']
+DEFAULT_ABOUT = {
+ "eyebrow": "Our story",
+ "heading": "Who we are and what we stand for",
+ "background": [
+  "DESS began in response to the challenge of unreliable electricity in Nigeria, and grew as customers asked for more. Today, Dabo Energy & Security Solutions is a technology and systems solutions company providing energy, security, connectivity, maintenance and technical consultation services.",
+  "We operate from Kano and Mararaba, serve Abuja and Nasarawa from our Mararaba base, and accept enquiries across Nigeria. With 7+ years of experience, we approach every job the same way: understand the problem, recommend a practical solution, install and configure it properly, and keep supporting it."
+ ],
+ "founders": "",
+ "expertise_label": "Our expertise",
+ "expertise": [
+  {
+   "title": "CCTV and security systems",
+   "text": "Design, installation, configuration and remote viewing setup, plus fault-finding on existing systems."
+  },
+  {
+   "title": "Solar and backup power",
+   "text": "Assessment-led design, equipment selection, installation, configuration and support."
+  },
+  {
+   "title": "Maintenance and troubleshooting",
+   "text": "Inspection, repairs where applicable, optimisation, upgrades and technical support."
+  },
+  {
+   "title": "Technical consultation",
+   "text": "Honest guidance on the right solution before you buy equipment or start installation."
+  },
+  {
+   "title": "Starlink and connectivity",
+   "text": "Installation, activation help, Wi-Fi and network setup, relocation and mounting."
+  },
+  {
+   "title": "Access control and related systems",
+   "text": "Intercoms, digital door locks, access control and electric fences, subject to assessment."
+  }
+ ],
+ "mission_label": "Our mission",
+ "mission": "To understand each customer's real problem and deliver the right technical solution, with dependable service and lasting value, and to stand by our work after installation.",
+ "image": "",
+ "image_alt": ""
+}
 DEFAULT_PHOTOS = {
  "hero": [{"image": "/hero-solar.jpg", "caption": "Solar power", "focus": "auto"}, {"image": "/cctv-gate.jpg", "caption": "CCTV & security", "focus": "auto"}, {"image": "/starlink-install.jpg", "caption": "Starlink connectivity", "focus": "auto"}],
  "service_cards": {
@@ -35,6 +75,13 @@ DEFAULT_PHOTOS = {
   {"image": "/cctv-gate.jpg", "category": "CCTV", "alt": "Technician installing two CCTV cameras on a gate pillar beside an electric fence"},
   {"image": "/starlink-install.jpg", "category": "Starlink", "alt": "Technician on a ladder installing a Starlink dish on a building"}]}
 PHO = _load('photos.json') if os.path.exists(SRC + 'content/photos.json') else DEFAULT_PHOTOS
+AB = _load('about.json') if os.path.exists(SRC + 'content/about.json') else DEFAULT_ABOUT
+FOCUS_KEYS = ('auto', 'top', 'upper', 'center', 'bottom')
+def _imgx(v, label, required=True):
+    if not v:
+        _need(not required, label + ' needs a photo'); return
+    _need(isinstance(v, str) and re.fullmatch(r'/(images/uploads/)?[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp)', v), label + ': photo path is not allowed: ' + str(v))
+    _need(os.path.exists(SRC + v.lstrip('/')), label + ': photo file is missing from the repository: ' + v)
 FOCUS = {'auto': None, 'top': '50% 22%', 'upper': '50% 35%', 'center': '50% 50%', 'bottom': '50% 80%'}
 def _need(cond, msg):
     if not cond: raise BuildError(msg)
@@ -81,6 +128,13 @@ def validate_content():
         v = PHO['service_cards'][k]; _img(v.get('image'), k + ' card photo'); _text(v.get('alt'), k + ' card photo description', 160); _need(v.get('focus', 'auto') in FOCUS, k + ' focus is not valid')
         v = PHO['service_pages'][k]; _img(v.get('image'), k + ' page photo', False); _text(v.get('alt', ''), k + ' page photo description', 160, False)
     _need(1 <= len(PHO['gallery']) <= 12, 'Site photos: the gallery needs 1 to 12 photos')
+    _need(1 <= len(AB.get('background', [])) <= 6, 'Company story: add 1 to 6 background paragraphs')
+    for x in AB['background']: _text(x, 'Company story paragraph', 1200)
+    _text(AB.get('eyebrow'), 'Company story small heading', 60); _text(AB.get('heading'), 'Company story heading', 120); _text(AB.get('founders', '') or '', 'Company story founders line', 200, False)
+    _text(AB.get('expertise_label'), 'Expertise heading', 60); _text(AB.get('mission_label'), 'Mission heading', 60); _text(AB.get('mission'), 'Mission', 700)
+    _need(3 <= len(AB.get('expertise', [])) <= 8, 'Company story: add 3 to 8 expertise cards')
+    for x in AB['expertise']: _text(x.get('title'), 'Expertise title', 80); _text(x.get('text'), 'Expertise text', 300)
+    _imgx(AB.get('image'), 'Company story photo', False); _text(AB.get('image_alt', '') or '', 'Company story photo description', 160, False)
     _shots = C['testimonials'].get('screenshots') or []
     _need(len(_shots) <= 8, 'Testimonials: at most 8 WhatsApp screenshots')
     for i, g in enumerate(_shots): _img(g.get('image'), 'WhatsApp screenshot %d' % (i + 1)); _text(g.get('caption', '') or '', 'WhatsApp screenshot caption %d' % (i + 1), 80, False)
@@ -90,6 +144,7 @@ try:
 except BuildError as _e:
     print('BUILD FAILED, nothing was changed on the website:', _e); sys.exit(1)
 TEL = S['phone_e164']; WA = 'https://wa.me/' + S['whatsapp_number']; MAIL = S['email']
+KBJSON = json.dumps({'faq': HM['faq'], 'why': HM['why'], 'about': {k: AB.get(k) for k in ('background', 'mission', 'expertise', 'founders')}}, ensure_ascii=False).replace('<', '\\u003c')
 SITEJS = json.dumps({'wa': S['whatsapp_number'], 'phone': S['phone_display'], 'email': S['email'], 'phone2': S.get('phone2_display', '')}).replace('<', '\\u003c')
 SOC=f'''<div class="social"><a href="{WA}" target="_blank" rel="noopener" aria-label="DESS on WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a><a href="https://www.facebook.com/daboenergy.ss" target="_blank" rel="noopener" aria-label="DESS on Facebook"><svg class="ico"><use href="#i-fb"/></svg></a><a href="https://www.instagram.com/dabo_energy_ss" target="_blank" rel="noopener" aria-label="DESS on Instagram"><svg class="ico"><use href="#i-ig"/></svg></a><a href="https://www.tiktok.com/@dabo_ess" target="_blank" rel="noopener" aria-label="DESS on TikTok"><svg class="ico"><use href="#i-tt"/></svg></a><a href="https://x.com/dabo_energy_ss" target="_blank" rel="noopener" aria-label="DESS on X"><svg class="ico"><use href="#i-x"/></svg></a></div>'''
 from urllib.parse import quote
@@ -167,6 +222,7 @@ FOOT=f'''</main>
 </div><p class="copy">© <span id="yr">2026</span> Dabo Energy &amp; Security Solutions (DESS). All rights reserved. <a href="#">Back to top &uarr;</a></p></footer>
 {WAPOP}
 <script>window.DESS_SITE={SITEJS};</script>
+<script type="application/json" id="dess-kb">{KBJSON}</script>
 <script src="/script.js"></script>
 </body></html>
 '''
@@ -263,13 +319,21 @@ dict(slug='cctv-common-problems',cat='CCTV',img='technician.jpg',alt='DESS techn
 <h2>Why regular maintenance matters</h2><p>When part of a system stays down for a long time, the site loses coverage without anyone noticing. In our <a href="/#projects">featured Kaduna case study</a>, much of a system had been out of operation after tampering, leaving only three working cameras. Regular checks catch faults early.</p>
 <h2>When to call a technician</h2><p>Call for help when faults repeat, when cameras have been damaged, or when you want to upgrade or add cameras to remove blind spots.</p>"""),
 ]
+BLOGC = _load('blog.json') if os.path.exists(SRC + 'content/blog.json') else {'images': {}}
+for _p in BP:
+    _bi = (BLOGC.get('images') or {}).get(_p['slug'])
+    if _bi:
+        _imgx(_bi.get('image'), 'Blog photo (%s)' % _p['slug']); _text(_bi.get('alt'), 'Blog photo description (%s)' % _p['slug'], 160)
+        _need(_bi.get('focus', 'auto') in FOCUS_KEYS, 'Blog photo focus is not valid')
+        _p['img'] = _bi['image'].lstrip('/'); _p['alt'] = EA(_bi['alt'])
+        _fv = FOCUS.get(_bi.get('focus') or 'auto'); _p['fs'] = (' style="object-position:%s"' % _fv) if _fv else ''
 def card(p):
-    return f'<a class="bcard" href="/blog-{p["slug"]}"><div class="bimg"><img src="/{p["img"]}" alt="{p["alt"]}" loading="lazy" decoding="async"></div><div class="bbody"><span class="btag">{p["cat"]}</span><h3>{p["title"]}</h3><p>{p["ex"]}</p><span class="more">Read the article</span></div></a>'
+    return f'<a class="bcard" href="/blog-{p["slug"]}"><div class="bimg"><img src="/{p["img"]}" alt="{p["alt"]}"{p.get("fs","")} loading="lazy" decoding="async"></div><div class="bbody"><span class="btag">{p["cat"]}</span><h3>{p["title"]}</h3><p>{p["ex"]}</p><span class="more">Read the article</span></div></a>'
 for i,p in enumerate(BP):
     ld='<script type="application/ld+json">'+json.dumps({"@context":"https://schema.org","@type":"BlogPosting","headline":p['title'].replace('&amp;','&'),"datePublished":DATE,"author":{"@type":"Organization","name":"Dabo Energy & Security Solutions"},"publisher":{"@type":"Organization","name":"Dabo Energy & Security Solutions","logo":{"@type":"ImageObject","url":B+"/logo-512.png"}},"mainEntityOfPage":B+"/blog-"+p['slug'],"image":B+"/"+p['img']},ensure_ascii=False)+'</script>\n'
     rel=''.join(card(q) for q in BP if q is not p)[:0]
     others=[q for q in BP if q['cat']==p['cat'] and q is not p]+[q for q in BP if q['cat']!=p['cat']]
-    h=head(p['title']+' | DESS Blog',p['d'],'/blog-'+p['slug'],'',ld)+f'<section class="phero"><div class="wrap"><p class="eyebrow"><a href="/blog">Blog</a> / {p["cat"]}</p><h1>{p["title"]}</h1><p class="lead">{p["ex"]}</p><p class="ameta">{DATE.replace("2026-10-13","13 October 2026")} &middot; {p["mins"]} min read</p></div></section><section class="sec"><div class="wrap"><article class="prose">{p["body"]}<div class="acta"><h3>Need help with your {p["cat"].lower()} project?</h3><p>Tell us about your premises and what you need. Phone consultations are free; site consultations are paid and priced by location.</p><div class="btns"><a href="/#contact" class="btn btn-gold">Get a Free Consultation</a><a href="{WA}" class="btn btn-wa">WhatsApp DESS</a></div></div></article><h2 class="more-h">Keep reading</h2><div class="bgrid">{"".join(card(q) for q in others[:2])}</div></div></section>\n'+FOOT
+    h=head(p['title']+' | DESS Blog',p['d'],'/blog-'+p['slug'],'',ld)+f'<section class="phero"><div class="wrap"><p class="eyebrow"><a href="/blog">Blog</a> / {p["cat"]}</p><h1>{p["title"]}</h1><p class="lead">{p["ex"]}</p><p class="ameta">{DATE.replace("2026-10-13","13 October 2026")} &middot; {p["mins"]} min read</p></div></section><section class="sec"><div class="wrap"><article class="prose"><figure class="afig"><img src="/{p["img"]}" alt="{p["alt"]}"{p.get("fs","")} loading="lazy" decoding="async"></figure>{p["body"]}<div class="acta"><h3>Need help with your {p["cat"].lower()} project?</h3><p>Tell us about your premises and what you need. Phone consultations are free; site consultations are paid and priced by location.</p><div class="btns"><a href="/#contact" class="btn btn-gold">Get a Free Consultation</a><a href="{WA}" class="btn btn-wa">WhatsApp DESS</a></div></div></article><h2 class="more-h">Keep reading</h2><div class="bgrid">{"".join(card(q) for q in others[:2])}</div></div></section>\n'+FOOT
     open(O+'blog-'+p['slug']+'.html','w').write(h)
 h=head('DESS Blog | Practical Guides on Solar Power and CCTV in Nigeria','Practical guides on solar and inverter systems, CCTV planning and maintenance from Dabo Energy & Security Solutions (DESS).','/blog')+f'<section class="phero"><div class="wrap"><p class="eyebrow">DESS Blog</p><h1>Practical guides on solar and CCTV</h1><p class="lead">Plain-language advice from the DESS team on solar power, CCTV planning and keeping systems working.</p></div></section><section class="sec"><div class="wrap"><div class="bgrid">{"".join(card(p) for p in BP)}</div></div></section>\n'+CTA+FOOT
 open(O+'blog.html','w').write(h)
@@ -320,6 +384,13 @@ def _shot(i, g):
     return '<figure class="wa-card"><button type="button" class="wa-shot" data-full="%s" aria-label="Enlarge screenshot %d"><img src="%s"%s alt="%s" loading="lazy" decoding="async"></button>%s</figure>' % (EA(g['image']), i + 1, EA(g['image']), _dims(g['image']), EA(alt), ('<figcaption>%s</figcaption>' % E(cap)) if cap else '')
 _SH = C['testimonials'].get('screenshots') or []
 WASEC = ('<div class="wa-reviews"><h3 class="sub">Real messages from customers on WhatsApp</h3><div class="wa-row">' + ''.join(_shot(i, g) for i, g in enumerate(_SH)) + '</div></div>') if _SH else ''
+def _about_html():
+    ps = ''.join(('<p class="big">%s</p>' if i == 0 else '<p>%s</p>') % E(t) for i, t in enumerate(AB['background']))
+    fo = ('<p class="founders">%s</p>' % E(AB['founders'])) if (AB.get('founders') or '').strip() else ''
+    im = ('<figure class="co-img"><img src="%s"%s alt="%s" loading="lazy" decoding="async"></figure>' % (EA(AB['image']), _dims(AB['image']), EA(AB.get('image_alt', '')))) if AB.get('image') else ''
+    xp = ''.join('<div class="xp"><span>%02d</span><h3>%s</h3><p>%s</p></div>' % (i + 1, E(x['title']), E(x['text'])) for i, x in enumerate(AB['expertise']))
+    return '<section class="sec dark company" id="company"><div class="wrap"><p class="eyebrow">%s</p><h2>%s</h2><div class="co-grid%s"><div class="co-text">%s%s</div>%s</div><h3 class="sub co-sub">%s</h3><div class="xgrid">%s</div><div class="mission"><span class="mlabel">%s</span><p>%s</p></div></div></section>\n' % (E(AB['eyebrow']), E(AB['heading']), ' has-img' if im else '', ps, fo, im, E(AB['expertise_label']), xp, E(AB['mission_label']), E(AB['mission']))
+ABOUTSEC = _about_html()
 def _stat(x):
     d = str(x['display']).strip(); mm = re.fullmatch(r'(\d+)(\+?)', d)
     if mm: return '<div class="stat"><b data-count="%s" data-suffix="%s">%s</b><span>%s</span></div>' % (mm.group(1), mm.group(2), E(d), E(x['label']))
@@ -397,7 +468,7 @@ H+=f'''<section class="hero"><div class="hero-bg">{HEROIMGS}</div><div class="wr
 <section class="sec" id="solutions"><div class="wrap"><p class="eyebrow">Primary solutions</p><h2>Systems designed around your requirements</h2><div class="pgrid">{''.join(card(p,b) for p,b in zip(P,BUL))}</div></div></section>
 <section class="sec dark" id="serve"><div class="wrap"><p class="eyebrow">Who we serve</p><h2>Built for homes, businesses and institutions</h2><div class="tiles">{''.join(f'<div class="tile"><span class="ti"><svg class="ico"><use href="#i-{k}"/></svg></span><b>{n}</b></div>' for k,n in SERVE)}</div></div></section>
 <section class="sec" id="why"><div class="wrap"><p class="eyebrow" id="about">About DESS</p><h2>Why DESS</h2><p class="big">{E(HM["about"])}</p><div class="whygrid">{''.join(f'<div class="why"><h3>{a}</h3><p>{b}</p></div>' for a,b in WHY)}</div></div></section>
-<section class="sec tint"><div class="wrap"><p class="eyebrow">Additional capabilities</p><h2>Related technical services</h2><div class="chips plain">{''.join(f'<span>{a}</span>' for a in ADD)}</div>
+{ABOUTSEC}<section class="sec tint"><div class="wrap"><p class="eyebrow">Additional capabilities</p><h2>Related technical services</h2><div class="chips plain">{''.join(f'<span>{a}</span>' for a in ADD)}</div>
 <h3 class="sub">Brands and technologies we work with include</h3><div class="mq"><div class="mq-track">{LOGOS}{LOGOS2}</div></div><p class="note">Logos are trademarks of their respective owners, shown to indicate the equipment we work with. They do not imply endorsement or official partnership. Equipment is specified according to project requirements.</p></div></section>
 <section class="sec dark proc" id="process"><div class="wrap proc-in"><div class="proc-l"><p class="eyebrow">How we work</p><h2>From first conversation to handover</h2><p class="big">Six clear steps, so you always know what happens next.</p><a href="/#contact" class="btn btn-gold">Start with a free consultation</a></div>{TLH}</div></section>
 <section class="sec" id="projects"><div class="wrap"><p class="eyebrow">Projects</p><h2>Our work</h2>{CASE}<div class="gallery">
