@@ -320,6 +320,61 @@ collections:
         label: Service
         name: item
         widget: string
+  - name: about
+    label: Company story and mission
+    file: content/about.json
+    fields:
+    - label: Small heading above the title
+      name: eyebrow
+      widget: string
+    - label: Section title
+      name: heading
+      widget: string
+    - label: Background paragraphs (1 to 6)
+      name: background
+      widget: list
+      min: 1
+      max: 6
+      hint: The first paragraph is shown larger. Only write things that are true.
+      field:
+        label: Paragraph
+        name: p
+        widget: text
+    - label: Founders line (optional)
+      name: founders
+      widget: string
+      required: false
+      hint: Leave empty unless the founders agreed to be named.
+    - label: Expertise heading
+      name: expertise_label
+      widget: string
+    - label: Expertise cards (3 to 8)
+      name: expertise
+      widget: list
+      min: 3
+      max: 8
+      summary: '{{fields.title}}'
+      fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Text
+        name: text
+        widget: text
+    - label: Mission heading
+      name: mission_label
+      widget: string
+    - label: Mission statement
+      name: mission
+      widget: text
+    - label: Photo (optional)
+      name: image
+      widget: image
+      required: false
+    - label: Photo description
+      name: image_alt
+      widget: string
+      required: false
   - name: photos
     label: Site photos
     file: content/photos.json
@@ -549,3 +604,81 @@ collections:
         widget: string
         required: false
         hint: 'For example: Solar customer, Kano. Do not use a full name unless they agreed.'
+  - name: blog
+    label: Blog photos
+    file: content/blog.json
+    fields:
+    - label: Photo for each article
+      name: images
+      widget: object
+      fields:
+      - label: How to size a solar and inverter system for your home or shop
+        name: solar-sizing-guide
+        widget: object
+        fields:
+        - label: Photo
+          name: image
+          widget: image
+        - label: Which part of the photo to keep
+          name: focus
+          widget: select
+          options: &id002
+          - label: Automatic
+            value: auto
+          - label: Top
+            value: top
+          - label: Upper middle
+            value: upper
+          - label: Middle
+            value: center
+          - label: Bottom
+            value: bottom
+          default: auto
+        - label: Short description (for screen readers)
+          name: alt
+          widget: string
+      - label: A simple maintenance checklist for your solar and inverter system
+        name: solar-maintenance-checklist
+        widget: object
+        fields:
+        - label: Photo
+          name: image
+          widget: image
+        - label: Which part of the photo to keep
+          name: focus
+          widget: select
+          options: *id002
+          default: auto
+        - label: Short description (for screen readers)
+          name: alt
+          widget: string
+      - label: How many CCTV cameras do you need? A simple planning guide
+        name: cctv-camera-planning
+        widget: object
+        fields:
+        - label: Photo
+          name: image
+          widget: image
+        - label: Which part of the photo to keep
+          name: focus
+          widget: select
+          options: *id002
+          default: auto
+        - label: Short description (for screen readers)
+          name: alt
+          widget: string
+      - label: Common CCTV problems and when to call a technician
+        name: cctv-common-problems
+        widget: object
+        fields:
+        - label: Photo
+          name: image
+          widget: image
+        - label: Which part of the photo to keep
+          name: focus
+          widget: select
+          options: *id002
+          default: auto
+        - label: Short description (for screen readers)
+          name: alt
+          widget: string
