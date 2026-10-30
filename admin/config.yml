@@ -147,6 +147,16 @@ collections:
     - label: TikTok link
       name: tiktok
       widget: string
+    - label: YouTube link
+      name: youtube
+      widget: string
+      required: false
+      hint: Optional. Paste the full link starting with https://. Leave empty to hide the icon.
+    - label: LinkedIn link
+      name: linkedin
+      widget: string
+      required: false
+      hint: Optional. Paste the full link starting with https://. Leave empty to hide the icon.
   - name: home
     label: Homepage text
     file: content/home.json
@@ -179,6 +189,16 @@ collections:
     - label: About DESS paragraph
       name: about
       widget: text
+    - label: 'Why DESS: small heading'
+      name: why_eyebrow
+      widget: string
+      required: false
+      hint: Optional. Leave empty for the default.
+    - label: 'Why DESS: big title'
+      name: why_title
+      widget: string
+      required: false
+      hint: Optional. Leave empty for the default.
     - label: Why DESS points
       name: why
       widget: list
@@ -195,6 +215,16 @@ collections:
     - label: Closing banner text
       name: cta_text
       widget: text
+    - label: 'FAQ: big title'
+      name: faq_title
+      widget: string
+      required: false
+      hint: Optional. Leave empty for the default.
+    - label: 'FAQ: sentence under the title'
+      name: faq_subtitle
+      widget: string
+      required: false
+      hint: Optional. Leave empty for the default.
     - label: Frequently asked questions
       name: faq
       widget: list
