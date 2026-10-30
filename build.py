@@ -99,6 +99,9 @@ def validate_content():
     _need(re.fullmatch(r'[^@\s]+@[^@\s]+\.[^@\s]+', S['email']), 'Settings: email address looks wrong')
     _need(re.fullmatch(r'\d\d:\d\d', S['hours_opens']) and re.fullmatch(r'\d\d:\d\d', S['hours_closes']), 'Settings: opening and closing times must look like 09:00')
     for k in ('facebook','instagram','x','tiktok'): _need(S[k].startswith('https://'), 'Settings: %s link must start with https://' % k)
+    for k in ('youtube','linkedin'):
+        if S.get(k): _text(S[k], 'Settings ' + k, 200); _need(S[k].startswith('https://'), 'Settings: %s link must start with https://' % k)
+    for k in ('why_eyebrow','why_title','faq_title','faq_subtitle'): _text(HM.get(k, '') or '', 'Homepage ' + k, 200, False)
     for k in ('eyebrow','h1_line1','h1_gold','lead','about','cta_title','cta_text'): _text(HM.get(k), 'Homepage ' + k)
     _need(len(HM['stats']) == 4, 'Homepage: exactly 4 numbers are needed')
     for i, x in enumerate(HM['stats']): _text(x.get('display'), 'Homepage stat %d' % (i+1), 40); _text(x.get('label'), 'Homepage stat label %d' % (i+1), 120)
@@ -147,6 +150,11 @@ TEL = S['phone_e164']; WA = 'https://wa.me/' + S['whatsapp_number']; MAIL = S['e
 KBJSON = json.dumps({'faq': HM['faq'], 'why': HM['why'], 'about': {k: AB.get(k) for k in ('background', 'mission', 'expertise', 'founders')}}, ensure_ascii=False).replace('<', '\\u003c')
 SITEJS = json.dumps({'wa': S['whatsapp_number'], 'phone': S['phone_display'], 'email': S['email'], 'phone2': S.get('phone2_display', '')}).replace('<', '\\u003c')
 SOC=f'''<div class="social"><a href="{WA}" target="_blank" rel="noopener" aria-label="DESS on WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a><a href="https://www.facebook.com/daboenergy.ss" target="_blank" rel="noopener" aria-label="DESS on Facebook"><svg class="ico"><use href="#i-fb"/></svg></a><a href="https://www.instagram.com/dabo_energy_ss" target="_blank" rel="noopener" aria-label="DESS on Instagram"><svg class="ico"><use href="#i-ig"/></svg></a><a href="https://www.tiktok.com/@dabo_ess" target="_blank" rel="noopener" aria-label="DESS on TikTok"><svg class="ico"><use href="#i-tt"/></svg></a><a href="https://x.com/dabo_energy_ss" target="_blank" rel="noopener" aria-label="DESS on X"><svg class="ico"><use href="#i-x"/></svg></a></div>'''
+_SOCX = ''
+if S.get('youtube'): _SOCX += '<a class="soc" href="%s" target="_blank" rel="noopener" aria-label="YouTube"><svg class="ico"><use href="#i-yt"/></svg></a>' % EA(S['youtube'])
+if S.get('linkedin'): _SOCX += '<a class="soc" href="%s" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="ico"><use href="#i-in"/></svg></a>' % EA(S['linkedin'])
+if _SOCX and SOC.rstrip().endswith('</div>'): SOC = SOC.rstrip()[:-6] + _SOCX + '</div>'
+
 from urllib.parse import quote
 _Q=[('I need a CCTV system installed','Hello DESS, I need a CCTV / security system installed.'),('I need solar or backup power','Hello DESS, I need a solar / backup power system.'),('I need maintenance for an existing system','Hello DESS, I need maintenance for an existing system.'),('I need Starlink installation','Hello DESS, I need a Starlink installation.'),('I want a technical consultation','Hello DESS, I would like a technical consultation.')]
 WAPOP='<button class="wafab" aria-label="Chat with the DESS assistant" aria-expanded="false" aria-controls="wapop"><svg class="ico"><use href="#i-chat"/></svg><b class="dot">1</b></button><div class="wapop" id="wapop" role="dialog" aria-label="DESS assistant" hidden><div class="wahead"><span class="av">D</span><div><strong>DESS Assistant</strong><small>Automated assistant &middot; answers from DESS information</small></div><button class="waclose" aria-label="Close chat">&times;</button></div><div class="wamsgs" id="wamsgs" aria-live="polite"></div><div class="wachips" id="wachips"></div><form class="wain" id="wain"><input id="wainput" type="text" placeholder="Type your question" autocomplete="off" aria-label="Type your question"><button type="submit" aria-label="Send">&rarr;</button></form><a class="start" id="wastart" href="https://wa.me/2349049811269" target="_blank" rel="noopener">Continue on WhatsApp</a></div>'
@@ -173,6 +181,15 @@ SPRITE='''<svg width="0" height="0" style="position:absolute" aria-hidden="true"
 <symbol id="i-ig" viewBox="0 0 24 24"><path d="M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zM12 8a4 4 0 100 8 4 4 0 000-8zM17.5 6.5h.01"/></symbol>
 <symbol id="i-tt" viewBox="0 0 24 24"><path d="M14 3v11a4 4 0 11-4-4M14 3c.4 2.7 2.2 4.4 5 4.6"/></symbol>
 <symbol id="i-x" viewBox="0 0 24 24"><path d="M4 4h4l12 16h-4zM20 4l-7.5 8.5M4 20l7.5-8.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M9 11a3 3 0 100-6 3 3 0 000 6zM3 20c0-3 3-5 6-5s6 2 6 5M16 5a3 3 0 010 6M18 15c2 .5 3 2 3 5"/></symbol>
+<symbol id="i-award" viewBox="0 0 24 24"><path d="M12 14a5 5 0 100-10 5 5 0 000 10zM8.5 13.5L7 21l5-3 5 3-1.5-7.5"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5"/></symbol>
+<symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0116 0v1M4 13h3v5H5a1 1 0 01-1-1zM20 13h-3v5h2a1 1 0 001-1zM17 18c0 2-2 3-5 3"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></symbol>
+<symbol id="i-yt" viewBox="0 0 24 24"><path d="M3 8a3 3 0 013-3h12a3 3 0 013 3v8a3 3 0 01-3 3H6a3 3 0 01-3-3zM10 9v6l5-3z"/></symbol>
+<symbol id="i-in" viewBox="0 0 24 24"><path d="M5 9v10M5 5.5v.01M10 19V9m0 4c0-2 1.5-4 4-4s3 1.5 3 4v6"/></symbol>
 <symbol id="i-tick" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
 </svg>'''
 def head(title,desc,path,extra='',ld=''):
@@ -197,7 +214,7 @@ def head(title,desc,path,extra='',ld=''):
 <link rel="icon" type="image/png" href="/favicon-48.png" sizes="48x48">
 <link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<script>document.documentElement.classList.add("js")</script>
+<script>document.documentElement.classList.add("js");try{{if(localStorage.getItem("dess-theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}}catch(e){{}}</script>
 <link rel="stylesheet" href="/style.css">
 {ld}</head>
 <body>
@@ -206,7 +223,7 @@ def head(title,desc,path,extra='',ld=''):
 <header class="nav"><div class="progress" aria-hidden="true"></div><div class="wrap nav-in">
 <a href="/" class="brand" aria-label="DESS home"><img src="/logo.png" alt="DESS - Dabo Energy &amp; Security Solutions logo" width="900" height="174"></a>
 <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
-<nav id="menu" class="menu" aria-label="Main"><div class="drawer-head"><span>Menu</span><button type="button" class="drawer-x" aria-label="Close menu">&times;</button></div><a href="/" class="m-home">Home</a><a href="/#solutions">Solutions</a><a href="/#why">Why DESS</a><a href="/#projects">Projects</a><a href="/blog">Blog</a><a href="/#faq">FAQ</a><a href="/#contact">Contact</a><a href="/#contact" class="btn btn-gold nav-cta">Get a Free Consultation</a><div class="drawer-foot"><a href="/#contact" class="btn btn-gold">Get a Free Consultation</a><div class="dbtns"><a href="{WA}" class="btn btn-wa"><svg class="ico"><use href="#i-wa"/></svg>WhatsApp</a><a href="tel:{TEL}" class="btn btn-glass"><svg class="ico"><use href="#i-phone"/></svg>Call</a></div><p><a href="mailto:{MAIL}">{MAIL}</a><a href="tel:{TEL}">+234 904 981 1269</a></p>{SOC}</div></nav>
+<nav id="menu" class="menu" aria-label="Main"><div class="drawer-head"><span>Menu</span><button type="button" class="drawer-x" aria-label="Close menu">&times;</button></div><a href="/" class="m-home" data-nav="home">Home</a><a href="/#solutions" data-nav="solutions">Solutions</a><a href="/#why" data-nav="why">Why DESS</a><a href="/#projects" data-nav="projects">Projects</a><a href="/blog" data-nav="blog">Blog</a><a href="/#faq" data-nav="faq">FAQ</a><a href="/#contact" data-nav="contact">Contact</a><button type="button" class="theme-btn" aria-label="Switch to dark mode"><svg class="ico"><use href="#i-moon"/></svg></button><a href="/#contact" class="btn btn-gold nav-cta">Get a Free Consultation</a><div class="drawer-foot"><a href="/#contact" class="btn btn-gold">Get a Free Consultation</a><div class="theme-card"><span class="tc-l"><svg class="ico"><use href="#i-moon"/></svg><b class="tc-name">Light mode</b></span><button type="button" class="tc-btn">Switch to Dark</button></div><div class="dbtns"><a href="{WA}" class="btn btn-wa"><svg class="ico"><use href="#i-wa"/></svg>WhatsApp</a><a href="tel:{TEL}" class="btn btn-glass"><svg class="ico"><use href="#i-phone"/></svg>Call</a></div><p><a href="mailto:{MAIL}">{MAIL}</a><a href="tel:{TEL}">+234 904 981 1269</a></p>{SOC}</div></nav>
 </div></header>
 <div class="scrim" aria-hidden="true"></div>
 <main id="main">
@@ -389,7 +406,7 @@ def _about_html():
     fo = ('<p class="founders">%s</p>' % E(AB['founders'])) if (AB.get('founders') or '').strip() else ''
     im = ('<figure class="co-img"><img src="%s"%s alt="%s" loading="lazy" decoding="async"></figure>' % (EA(AB['image']), _dims(AB['image']), EA(AB.get('image_alt', '')))) if AB.get('image') else ''
     xp = ''.join('<div class="xp"><span>%02d</span><h3>%s</h3><p>%s</p></div>' % (i + 1, E(x['title']), E(x['text'])) for i, x in enumerate(AB['expertise']))
-    return '<section class="sec dark company" id="company"><div class="wrap"><p class="eyebrow">%s</p><h2>%s</h2><div class="co-grid%s"><div class="co-text">%s%s</div>%s</div><h3 class="sub co-sub">%s</h3><div class="xgrid">%s</div><div class="mission"><span class="mlabel">%s</span><p>%s</p></div></div></section>\n' % (E(AB['eyebrow']), E(AB['heading']), ' has-img' if im else '', ps, fo, im, E(AB['expertise_label']), xp, E(AB['mission_label']), E(AB['mission']))
+    return '<section class="sec company" id="company"><div class="wrap"><p class="eyebrow">%s</p><h2>%s</h2><div class="co-grid%s"><div class="co-text">%s%s</div>%s</div><h3 class="sub co-sub">%s</h3><div class="xgrid">%s</div><div class="mission"><span class="mlabel">%s</span><p>%s</p></div></div></section>\n' % (E(AB['eyebrow']), E(AB['heading']), ' has-img' if im else '', ps, fo, im, E(AB['expertise_label']), xp, E(AB['mission_label']), E(AB['mission']))
 ABOUTSEC = _about_html()
 def _stat(x):
     d = str(x['display']).strip(); mm = re.fullmatch(r'(\d+)(\+?)', d)
@@ -397,6 +414,10 @@ def _stat(x):
     return '<div class="stat"><b>%s</b><span>%s</span></div>' % (E(d), E(x['label']))
 STATS = ''.join(_stat(x) for x in HM['stats'])
 WHY = [(E(w['title']), E(w['text'])) for w in HM['why']]
+WHYICONS = ['shield', 'wr', 'box', 'headset', 'award', 'users']
+WHYCARDS = ''.join('<div class="why"><span class="wi"><svg class="ico"><use href="#i-%s"/></svg></span><div><h3>%s</h3><p>%s</p></div></div>' % (WHYICONS[i % len(WHYICONS)], t, x) for i, (t, x) in enumerate(WHY))
+WHYEY = E(HM.get('why_eyebrow') or 'Why DESS'); WHYTI = E(HM.get('why_title') or 'Technical solutions you can rely on')
+FAQT = E(HM.get('faq_title') or 'Got questions? We have the answers.'); FAQS = E(HM.get('faq_subtitle') or 'Here are the most common things people ask before getting started.')
 FAQ = [(E(f['q']), E(f['a'])) for f in HM['faq']]
 ADD = [E(x) for x in C['services']['additional']]
 Q = [(E(t['name']), '\u201c' + E(t['quote']) + '\u201d', t.get('language', 'en')) for t in C['testimonials']['items'] if t.get('show', True)]
@@ -466,9 +487,9 @@ H+=f'''<section class="hero"><div class="hero-bg">{HEROIMGS}</div><div class="wr
 <p class="lead">{E(HM["lead"])}</p>{BTNS}{HERODOTS}</div></div></section>
 <section class="stats" aria-label="DESS in numbers"><div class="wrap stats-in">{STATS}</div></section>
 <section class="sec" id="solutions"><div class="wrap"><p class="eyebrow">Primary solutions</p><h2>Systems designed around your requirements</h2><div class="pgrid">{''.join(card(p,b) for p,b in zip(P,BUL))}</div></div></section>
-<section class="sec dark" id="serve"><div class="wrap"><p class="eyebrow">Who we serve</p><h2>Built for homes, businesses and institutions</h2><div class="tiles">{''.join(f'<div class="tile"><span class="ti"><svg class="ico"><use href="#i-{k}"/></svg></span><b>{n}</b></div>' for k,n in SERVE)}</div></div></section>
-<section class="sec" id="why"><div class="wrap"><p class="eyebrow" id="about">About DESS</p><h2>Why DESS</h2><p class="big">{E(HM["about"])}</p><div class="whygrid">{''.join(f'<div class="why"><h3>{a}</h3><p>{b}</p></div>' for a,b in WHY)}</div></div></section>
-{ABOUTSEC}<section class="sec tint"><div class="wrap"><p class="eyebrow">Additional capabilities</p><h2>Related technical services</h2><div class="chips plain">{''.join(f'<span>{a}</span>' for a in ADD)}</div>
+<section class="sec dark whys" id="why"><div class="wrap"><div class="sec-head"><p class="eyebrow" id="about">{WHYEY}</p><h2>{WHYTI}</h2><p class="sub-lead">{E(HM["about"])}</p></div><div class="whygrid">{WHYCARDS}</div></div></section>
+{ABOUTSEC}<section class="sec dark" id="serve"><div class="wrap"><p class="eyebrow">Who we serve</p><h2>Built for homes, businesses and institutions</h2><div class="tiles">{''.join(f'<div class="tile"><span class="ti"><svg class="ico"><use href="#i-{k}"/></svg></span><b>{n}</b></div>' for k,n in SERVE)}</div></div></section>
+<section class="sec tint"><div class="wrap"><p class="eyebrow">Additional capabilities</p><h2>Related technical services</h2><div class="chips plain">{''.join(f'<span>{a}</span>' for a in ADD)}</div>
 <h3 class="sub">Brands and technologies we work with include</h3><div class="mq"><div class="mq-track">{LOGOS}{LOGOS2}</div></div><p class="note">Logos are trademarks of their respective owners, shown to indicate the equipment we work with. They do not imply endorsement or official partnership. Equipment is specified according to project requirements.</p></div></section>
 <section class="sec dark proc" id="process"><div class="wrap proc-in"><div class="proc-l"><p class="eyebrow">How we work</p><h2>From first conversation to handover</h2><p class="big">Six clear steps, so you always know what happens next.</p><a href="/#contact" class="btn btn-gold">Start with a free consultation</a></div>{TLH}</div></section>
 <section class="sec" id="projects"><div class="wrap"><p class="eyebrow">Projects</p><h2>Our work</h2>{CASE}<div class="gallery">
@@ -477,7 +498,7 @@ H+=f'''<section class="hero"><div class="hero-bg">{HEROIMGS}</div><div class="wr
 <p class="note">More project case studies will be added here.</p>{UPDSEC}</div></section>
 <section class="sec tint" id="testimonials"><div class="wrap"><p class="eyebrow">Testimonials</p><h2>What customers say</h2><div class="quotes">{''.join(f'<blockquote class="quote"><p lang="{l}">{t}</p><cite>{n}</cite></blockquote>' for n,t,l in Q)}</div>{WASEC}</div></section>
 <section class="sec dark globe-sec" id="coverage"><div class="wrap globe-in"><div><p class="eyebrow">Where we work</p><h2>Based in Kano and Mararaba. Working nationwide.</h2><ul class="locs"><li><b>Kano</b><span>No. 35 France Road, Sabon Gari, Kano State</span></li><li><b>Mararaba</b><span>Our base for projects across Nasarawa, Abuja and surrounding areas</span></li><li><b>Nationwide &amp; international</b><span>Projects elsewhere are quoted by location, logistics and scope</span></li></ul></div><div class="globe-wrap"><canvas id="globe" role="img" aria-label="Animated globe marking Kano, Abuja and Nasarawa in Nigeria"></canvas></div></div></section>
-<section class="sec" id="faq"><div class="wrap narrow"><p class="eyebrow">FAQ</p><h2>Common questions</h2>{''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in FAQ)}</div></section>
+<section class="sec dark faqs" id="faq"><div class="wrap narrow"><div class="sec-head"><p class="eyebrow">FAQ</p><h2>{FAQT}</h2><p class="sub-lead">{FAQS}</p></div>{''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in FAQ)}</div></section>
 {BLOGSEC}{CTA}<section class="sec tint" id="contact"><div class="wrap contact"><div><p class="eyebrow">Contact</p><h2>Let’s discuss your project</h2>
 <p class="co"><strong>Dabo Energy &amp; Security Solutions (DESS)</strong></p>
 <ul class="clist"><li><svg class="ico"><use href="#i-phone"/></svg><a href="tel:{TEL}">+234 904 981 1269</a></li><li class="wa"><svg class="ico"><use href="#i-wa"/></svg><a href="{WA}">WhatsApp: +234 904 981 1269</a></li><li><svg class="ico"><use href="#i-mail"/></svg><a href="mailto:{MAIL}">{MAIL}</a></li><li><svg class="ico"><use href="#i-clock"/></svg><span><strong>Monday to Saturday, 9:00 AM to 5:00 PM</strong><br>Sunday emergency work may be available by arrangement</span></li></ul>
@@ -513,6 +534,9 @@ DEF = {'phone_display': '+234 904 981 1269', 'phone_e164': '+2349049811269', 'wh
        'hours_main': 'Monday to Saturday, 9:00 AM to 5:00 PM', 'hours_note': 'Sunday emergency work may be available by arrangement', 'hours_short': 'Mon to Sat, 9:00 AM to 5:00 PM',
        'facebook': 'https://www.facebook.com/daboenergy.ss', 'instagram': 'https://www.instagram.com/dabo_energy_ss', 'x': 'https://x.com/dabo_energy_ss', 'tiktok': 'https://www.tiktok.com/@dabo_ess'}
 def fix(t):
+    _yl = [u for u in (S.get('youtube'), S.get('linkedin')) if u]
+    if _yl:
+        t = t.replace('"https://www.tiktok.com/@dabo_ess"', '"https://www.tiktok.com/@dabo_ess",\n  ' + ',\n  '.join('"%s"' % u.replace('"', '') for u in _yl))
     if S.get('phone2_e164') and S.get('phone2_display'):
         p2e, p2d = S['phone2_e164'], E(S['phone2_display'])
         a1 = '<li><svg class="ico"><use href="#i-phone"/></svg><a href="tel:+2349049811269">+234 904 981 1269</a></li>'
