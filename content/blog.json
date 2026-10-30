@@ -1,8 +1,8 @@
 {
   "images": {
     "solar-sizing-guide": {
-      "image": "/solar-inverter.jpg",
-      "focus": "auto",
+      "image": "/images/uploads/img_0533.webp",
+      "focus": "upper",
       "alt": "Solar inverter and battery storage racks installed in a plant room"
     },
     "solar-maintenance-checklist": {
