@@ -299,3 +299,37 @@ document.addEventListener('touchstart', function () {}, { passive: true });
     box.appendChild(im); box.appendChild(x); document.body.appendChild(box); x.focus();
   });
 })();
+
+(() => { // light / dark mode
+  const root = document.documentElement, KEY = 'dess-theme';
+  const sync = () => {
+    const d = root.getAttribute('data-theme') === 'dark';
+    document.querySelectorAll('.tc-name').forEach(n => { n.textContent = d ? 'Dark mode' : 'Light mode'; });
+    document.querySelectorAll('.tc-btn').forEach(b => { b.textContent = d ? 'Switch to Light' : 'Switch to Dark'; });
+    document.querySelectorAll('.theme-btn').forEach(b => b.setAttribute('aria-label', d ? 'Switch to light mode' : 'Switch to dark mode'));
+    document.querySelectorAll('.theme-btn use, .tc-l use').forEach(u => u.setAttribute('href', d ? '#i-sun' : '#i-moon'));
+  };
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.tc-btn, .theme-btn')) return;
+    const toDark = root.getAttribute('data-theme') !== 'dark';
+    if (toDark) root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme');
+    try { localStorage.setItem(KEY, toDark ? 'dark' : 'light'); } catch (err) {}
+    sync();
+  });
+  sync();
+})();
+(() => { // highlight the current page or section in the menu
+  const links = [...document.querySelectorAll('.menu > a[data-nav]')]; if (!links.length) return;
+  const set = k => links.forEach(a => a.classList.toggle('active', a.dataset.nav === k));
+  const p = location.pathname.replace(/\/$/, '') || '/';
+  if (p === '/' || p === '/index.html') {
+    set('home');
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && scrollY >= 200) set(e.target.id); }), { rootMargin: '-45% 0px -50% 0px' });
+      ['solutions', 'why', 'projects', 'faq', 'contact'].map(id => document.getElementById(id)).filter(Boolean).forEach(s => io.observe(s));
+      addEventListener('scroll', () => { if (scrollY < 200) set('home'); }, { passive: true });
+    }
+  } else if (p.indexOf('/blog') === 0) set('blog');
+  else if (['/cctv', '/solar', '/maintenance', '/consultation'].indexOf(p) > -1) set('solutions');
+  else if (p.indexOf('/updates') === 0) set('projects');
+})();

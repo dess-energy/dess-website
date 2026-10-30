@@ -525,3 +525,80 @@ form .btn{white-space:normal;text-align:center}
 @media(min-width:960px){.xgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.co-grid.has-img{grid-template-columns:1.25fr .75fr}.mission{padding:32px 36px}}
 .prose .afig{margin:0 0 24px}
 .prose .afig img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:16px}
+
+/* ===== v10: Why DESS cards, dark FAQ, premium drawer, dark mode, article CTA fix ===== */
+.sec-head{text-align:center;max-width:760px;margin:0 auto 36px}
+.sec-head .eyebrow{color:var(--gold)}
+.sec-head h2{color:#fff;margin-bottom:14px}
+.sub-lead{color:#aebbd1;font-size:1.05rem;max-width:36em;margin-inline:auto}
+.whys{background-color:#0f1830}
+.whygrid{display:grid;gap:16px}
+.why{display:flex;gap:18px;align-items:flex-start;padding:26px 24px;border-radius:26px;border:1px solid var(--ln);border-top:1px solid var(--ln);background:linear-gradient(160deg,rgba(8,13,25,.88),rgba(15,24,45,.9));transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease}
+.why h3{color:#fff;font-size:1.22rem;margin:2px 0 6px}
+.why p{color:#aebbd1;margin:0}
+.wi{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:var(--gold);background:rgba(245,179,1,.1)}
+.wi .ico{width:24px;height:24px}
+.why:hover,.why:focus-within{border-color:rgba(245,179,1,.55);box-shadow:0 0 0 1px rgba(245,179,1,.16),0 18px 40px rgba(0,0,0,.28)}
+.faqs{background-color:#0b1222}
+.faqs details{border-bottom:1px solid var(--ln);padding:2px 0}
+.faqs summary{color:#fff;font-size:clamp(1.02rem,3.6vw,1.2rem);font-weight:600;padding:22px 42px 22px 0}
+.faqs summary::after{content:"";width:9px;height:9px;border-right:2px solid #9fb1cc;border-bottom:2px solid #9fb1cc;transform:rotate(45deg);top:50%;margin-top:-7px;right:6px;font-size:0;transition:transform .25s ease,margin .25s ease}
+.faqs details[open] summary::after{content:"";transform:rotate(-135deg);margin-top:-2px}
+.faqs summary:hover{color:var(--gold)}
+.faqs details p{color:#aebbd1;padding:0 0 22px;max-width:46em}
+/* company story now on the light background */
+.company .big,.company .co-text p.big{color:var(--text)}
+.company .co-text p{color:var(--mut)}
+.company .co-sub{color:var(--mut)}
+.founders{color:var(--blue)!important}
+.xp{border:1px solid var(--bd);background:#fff}
+.xp h3{color:var(--ink)}
+.xp p{color:var(--mut)}
+.xp span{color:var(--blue)}
+.xp:hover{border-color:var(--blue)}
+@media(min-width:760px){.whygrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:960px){.whygrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* article call-to-action: fix unreadable text and button colours */
+.prose .acta p{color:#c9d6ea;margin-bottom:16px}
+.prose .acta a.btn{font-weight:700}
+.prose .acta a.btn-gold{color:var(--ink)}
+.prose .acta a.btn-glass,.prose .acta a.btn-wa{color:#fff}
+.prose a.btn-gold{color:var(--ink)}
+/* theme buttons */
+.theme-btn{display:none}
+@media(min-width:1100px){.menu>.theme-btn{display:grid;place-items:center;width:38px;height:38px;padding:0;border-radius:50%;border:1px solid var(--ln);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;transition:transform .15s ease,background .2s ease}.menu>.theme-btn:hover{background:rgba(245,179,1,.16)}.menu>.theme-btn:active{transform:scale(.92)}.menu>.theme-btn .ico{width:18px;height:18px}}
+/* premium drawer feel */
+@media(max-width:1099px){
+ .menu{background:linear-gradient(180deg,#101b36,#070b16)}
+ .drawer-head{border-bottom:1px solid var(--ln)}
+ .drawer-x{border-radius:14px;background:rgba(255,255,255,.06)}
+ .menu>a:not(.btn){margin:2px 12px;padding:13px 16px;border:0;border-radius:14px;color:#d6e0f2;font-size:1rem}
+ .menu>a:not(.btn)::after{display:none}
+ .menu>a:not(.btn):hover{background:rgba(255,255,255,.05)}
+ .menu>a.active:not(.btn){background:rgba(245,179,1,.13);color:var(--gold)}
+ .menu>.theme-btn{display:none}
+ .theme-card{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px 9px 14px;border:1px solid var(--ln);border-radius:16px;background:rgba(255,255,255,.04)}
+ .tc-l{display:flex;align-items:center;gap:10px;color:#fff;font-size:.92rem}
+ .tc-l .ico{width:20px;height:20px}
+ .tc-btn{border:0;border-radius:999px;padding:9px 14px;background:rgba(255,255,255,.1);color:#fff;font:700 .78rem system-ui,sans-serif;cursor:pointer;transition:transform .15s ease,background .2s ease}
+ .tc-btn:active{transform:scale(.95)}
+ .menu .drawer-foot .btn-wa{background:transparent;border:1px solid #1fa855;color:#4fd17f}
+ .menu .drawer-foot .btn-wa:hover{background:rgba(31,168,85,.14)}
+}
+@media(min-width:1100px){.theme-card{display:none}}
+/* dark mode */
+html[data-theme="dark"]{color-scheme:dark;--paper:#0b1325;--text:#dbe5f5;--mut:#9fb0c9;--bd:rgba(255,255,255,.13)}
+html[data-theme="dark"] body{background:#080d19;color:var(--text)}
+html[data-theme="dark"] h2,html[data-theme="dark"] .quote cite,html[data-theme="dark"] label,html[data-theme="dark"] .co,html[data-theme="dark"] .clist strong,html[data-theme="dark"] .bbody h3,html[data-theme="dark"] .xp h3,html[data-theme="dark"] .prose h2{color:#fff}
+html[data-theme="dark"] .card,html[data-theme="dark"] .chips a,html[data-theme="dark"] .chips span,html[data-theme="dark"] .quote,html[data-theme="dark"] form,html[data-theme="dark"] .bcard,html[data-theme="dark"] .xp,html[data-theme="dark"] .wa-shot{background:#101a30;border-color:var(--bd)}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#0a1020;color:#fff;border-color:rgba(255,255,255,.22)}
+html[data-theme="dark"] .shot,html[data-theme="dark"] .cimg,html[data-theme="dark"] .bimg{background:#0b1325}
+html[data-theme="dark"] .prose p,html[data-theme="dark"] .prose li{color:#c4d1e6}
+html[data-theme="dark"] .more,html[data-theme="dark"] address a,html[data-theme="dark"] .clist a,html[data-theme="dark"] .prose a:not(.btn){color:#7db2ff}
+html[data-theme="dark"] .sec:not(.dark) .eyebrow,html[data-theme="dark"] .xp span{color:#7db2ff}
+html[data-theme="dark"] .founders{color:#7db2ff!important}
+html[data-theme="dark"] .xp:hover{border-color:#7db2ff}
+html[data-theme="dark"] .upd-item h2{color:#fff}
+html[data-theme="dark"] .chips a:hover{color:#7db2ff}
+.tc-l{white-space:nowrap;font-size:.88rem}
+.tc-btn{white-space:nowrap;padding:8px 12px;font-size:.74rem}
