@@ -22,6 +22,8 @@
     }
   ],
   "about": "DESS is the short name of Dabo Energy & Security Solutions, a technology and systems solutions company providing energy, security, connectivity, maintenance and technical consultation services.",
+  "why_eyebrow": "",
+  "why_title": "",
   "why": [
     {
       "title": "Technical approach",
@@ -41,7 +43,7 @@
     },
     {
       "title": "Experience",
-      "text": "Over seven years in the industry, with 150+ projects completed."
+      "text": "Over eight years in the industry, with 250+ projects completed."
     },
     {
       "title": "Customer-focused service",
@@ -50,6 +52,8 @@
   ],
   "cta_title": "Discuss your project with DESS",
   "cta_text": "Tell us about your premises and requirements. We will help you identify the right solution.",
+  "faq_title": "",
+  "faq_subtitle": "",
   "faq": [
     {
       "q": "Do you install solar systems?",
